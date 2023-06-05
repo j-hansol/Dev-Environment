@@ -1,4 +1,4 @@
 #!/bin/bash
 
-/usr/bin/svhost sites
+/usr/bin/svhost init
 exec "$@"

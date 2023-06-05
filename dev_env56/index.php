@@ -1,26 +1,58 @@
 <?php
-    $base = '/DevHome/sites';
+    function checkSites() {
+        if(file_exists('/etc/apache2/sites-enabled/sites.conf')) return 1;
+        elseif(file_exists('/etc/apache2/sites-enabled/site.conf')) return 0;
+        else return -1;
+    }
+
+    $is_sites = checkSites();
+    $part_name = null;
+    if($is_sites == 1) $part_name = '일반';
+    elseif($is_sites == 0) $part_name = '멀티 호스트 도매인 사이트';
+    else $part_name = '미설정';
+
     $domain_suffix = "wd";
     $sites = array();
     $docroots = array(
         'docroot', 'public', 'public_html', 'www', 'html', 'web'
     );
 
-    $dh = opendir( $base );
-    if( $dh ) {
-        while( ($entry = readdir( $dh )) ) {
-            foreach( $docroots as $docroot ) {
-                if( $entry == '..' || $entry == '.' ) continue;
-                if( filetype( $base . '/' . $entry . '/' . $docroot ) == 'dir' ) {
-                    $sites[] = array(
-                        'url' => "https://$docroot.$entry.$domain_suffix",
-                        'sitename' => $entry
-                    );
-                    break;
+    if($is_sites == 1) {
+        $base = '/DevHome/sites';
+        $dh = opendir( $base );
+        if( $dh ) {
+            while( ($entry = readdir( $dh )) ) {
+                foreach( $docroots as $docroot ) {
+                    if( $entry == '..' || $entry == '.' ) continue;
+                    if( filetype( $base . '/' . $entry . '/' . $docroot ) == 'dir' ) {
+                        $sites[] = array(
+                            'https_url' => "https://$docroot.$entry.$domain_suffix",
+                            'http_url' => "http://$docroot.$entry.$domain_suffix",
+                            'sitename' => $entry
+                        );
+                        break;
+                    }
                 }
             }
         }
     }
+    elseif($is_sites == 0) {
+        $base = '/DevHome/site';
+        $dh = opendir( $base );
+        if($dh) {
+            while( ($entry = readdir( $dh )) ) {
+                if( $entry == '..' || $entry == '.' ) continue;
+                if( filetype( $base . '/' . $entry ) == 'dir' ) {
+                    $sites[] = array(
+                        'https_url' => "https://www.$entry.$domain_suffix",
+                        'http_url' => "http://www.$entry.$domain_suffix",
+                        'sitename' => $entry
+                    );
+                }
+            }
+        }
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -43,7 +75,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a href="http://admin.sites.<?=$domain_suffix?>/myadmin" title="phpMyAdmin">데이터베이스 관리</a>
+                        <a href="./myadmin" title="phpMyAdmin">데이터베이스 관리</a>
                     </li>
                 </ul>
             </div>
@@ -51,13 +83,14 @@
 
         <div class="container mt-5">
             <div class="card">
-                <div class="card-header">사이트 목록</div>
+                <div class="card-header">사이트 목록 (<?=$part_name?>)</div>
                 <div class="card-body">
                     <?php foreach( $sites as $site ): ?>
-                        <div class="row p-2">
-                            <div class="col-sm-1 col-1 p-2 bg-info">&nbsp;</div>
-                            <div class="col-sm-11 col-11 p-2 bg-light">
-                                    <a href="<?=$site['url']?>" title="<?=$site['sitename']?>"><?=$site['sitename']?></a>
+                        <div class="d-inline-block rounded m-2 bg-white" style="box-shadow: 1px 1px 10px 1px #aaa">
+                            <div class="d-inline-block px-4 py-2 bg-info text-white"><?=$site['sitename']?></div>
+                            <div class="d-inline-block p-2">
+                                <a class="m-1 p-1 text-success" href="<?=$site['https_url']?>" title="https">https</a>
+                                <a class="m-1 p-1 text-secondary" href="<?=$site['http_url']?>" title="http">http</a>
                             </div>
                         </div>
                     <?php endforeach; ?>
