@@ -1,0 +1,22 @@
+version: "3.8"
+volumes:
+    sql_data:
+    webroot:
+
+services:
+    db:
+        image: pig482/mysql:kr
+        environment:
+            MYSQL_ROOT_PASSWORD: mysql
+        ports:
+            - 3306:3306
+        volumes:
+            - .\sql_data:/var/lib/mysql
+            
+    web:
+        image: pig482/devenv:p74
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - .\webroot:/DevHome

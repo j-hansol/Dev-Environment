@@ -1,0 +1,30 @@
+version: "3.8"
+volumes:
+    sql_data:
+    webroot:
+    solr_cores:
+
+services:
+    db:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: mysql
+        ports:
+            - 3306:3306
+        volumes:
+            - .\sql_data:/var/lib/mysql
+
+    solr:
+        image:: pig482/solr:55
+        ports:
+            - 8983:8983
+        volumes:
+            - .\solr_cores:/opt/solr/server/solr/cores
+            
+    web:
+        image: pig482/devenv:p56
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - .\webroot:/DevHome

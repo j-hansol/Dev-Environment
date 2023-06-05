@@ -1,0 +1,90 @@
+<types>
+<!--
+  Example: Adding German language field types to our Solr Schema.
+  If you enable this, make sure you have a folder called lang containing
+  stopwords_de.txt and synonyms_de.txt.
+
+  For examples from other languages, see
+  ./server/solr/configsets/sample_techproducts_configs/conf/schema.xml
+  from your Solr installation.
+-->
+<!--
+    <fieldType name="text_de" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.StopFilterFactory" words="lang/stopwords_de.txt" format="snowball" ignoreCase="true"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" splitOnCaseChange="1" splitOnNumerics="1" catenateWords="1" catenateNumbers="1" catenateAll="0" protected="protwords.txt" preserveOriginal="1"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.GermanLightStemFilterFactory"/>
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="lang/synonyms_de.txt" ignoreCase="true" expand="true"/>
+        <filter class="solr.StopFilterFactory" words="lang/stopwords_de.txt" format="snowball" ignoreCase="true"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" splitOnCaseChange="1" splitOnNumerics="1" catenateWords="0" catenateNumbers="0" catenateAll="0" protected="protwords.txt" preserveOriginal="1"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.GermanLightStemFilterFactory"/>
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+      </analyzer>
+    </fieldType>
+-->
+
+        <!-- Korean -->
+        <fieldType name="text_ko" class="solr.TextField" positionIncrementGap="100">
+                <analyzer>
+                        <tokenizer class="org.bitbucket.eunjeon.mecab_ko_lucene_analyzer.StandardTokenizerFactory" compoundNounMinLength="3"/>
+                </analyzer>
+	</fieldType>
+
+	<!-- Arabic -->
+        <fieldType name="text_ar" class="solr.TextField" positionIncrementGap="100">
+                <analyzer>
+                        <tokenizer class="solr.StandardTokenizerFactory"/>
+                        <filter class="solr.LowerCaseFilterFactory"/>
+                        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ar.txt" />
+                        <filter class="solr.ArabicNormalizationFilterFactory"/>
+                        <filter class="solr.ArabicStemFilterFactory"/>
+                </analyzer>
+        </fieldType>
+
+        <!-- French -->
+        <fieldType name="text_fr" class="solr.TextField" positionIncrementGap="100">
+                <analyzer>
+                        <tokenizer class="solr.StandardTokenizerFactory"/>
+                        <filter class="solr.ElisionFilterFactory" ignoreCase="true" articles="lang/contractions_fr.txt"/>
+                        <filter class="solr.LowerCaseFilterFactory"/>
+                        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_fr.txt" format="snowball" />
+                        <filter class="solr.FrenchLightStemFilterFactory"/>
+                </analyzer>
+	</fieldType>
+
+	<!-- Spanish -->
+        <fieldType name="text_es" class="solr.TextField" positionIncrementGap="100">
+                <analyzer>
+                        <tokenizer class="solr.StandardTokenizerFactory"/>
+                        <filter class="solr.LowerCaseFilterFactory"/>
+                        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_es.txt" format="snowball" />
+                        <filter class="solr.SpanishLightStemFilterFactory"/>
+                </analyzer>
+        </fieldType>
+
+        <!-- Chinenese -->
+        <fieldType name="text_zh-hans" class="solr.TextField" positionIncrementGap="100">
+                <analyzer>
+                        <tokenizer class="solr.StandardTokenizerFactory"/>
+                        <filter class="solr.CJKBigramFilterFactory" han="true" />
+                </analyzer>
+	</fieldType>
+
+	<!-- Russian -->
+        <fieldType name="text_ru" class="solr.TextField" positionIncrementGap="100">
+                <analyzer>
+                        <tokenizer class="solr.StandardTokenizerFactory"/>
+                        <filter class="solr.LowerCaseFilterFactory"/>
+                        <filter class="solr.RussianLightStemFilterFactory"/>
+                </analyzer>
+        </fieldType>
+</types>
