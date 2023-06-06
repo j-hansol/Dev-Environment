@@ -37,3 +37,34 @@ PHP 버전별 컨테이느는 아래와 같이 3개로 구성하고 각각에 �
 
 
 ## 컨테이너 빌더 리소스 구성
+
+### PHP 5.6 도커 켄테이너
+본 저장소의 [dev_env56](https://github.com/j-hansol/Dev-Environment/tree/master/dev_env56)에 관련 파일이 저장되어 있다. 각각의 파일에 대한 간단한 설명은 아래와 같다.
+
+* myadmin : PhpMyAdmin 프로그램 폴더
+* ssl_key : 셀스서명한 키파일 폴더
+* Dockerfile : 도커 이미지 빌드용 파일
+* docker_entrypoint.sh : 컨테이너 실행 시 실행될 스크립트
+* drush : Drupal 7.x 사이트 관리 도구
+* index.php : 컨테이너에서 관리 중인 사이트 도우미 프로그램
+* site.conf : 멀티 호스트 도매인 사이트용 Apache2 환경설정 파일
+* sites.conf : 일반적인 사이트를 위한 Apache2 환경설정 파일
+* svhost.sh : 멀티 호스트 도매인 사이트, 일반적인 사이트 운영 모드 변경옹 스크립트
+
+위 파일 중 ```drush```를 제외한 너머지 파일은 내용은 조검씩 다를 수 있으나 기능이 같다. 그래서 나머지 컨테이너에서는 잠시 생락한다.
+
+### PHP 7.4 / 8.2 도커 컨테이너
+
+위 파일 중 ```drush```를 제외한 파일이 준비되어 있다. 자세한 파일 구성은 아래 링크를 클릭하여 확인할 수 있다.
+
+* [PHP 7.4](https://github.com/j-hansol/Dev-Environment/tree/master/dev_env74)
+* [PHP 8.2](https://github.com/j-hansol/Dev-Environment/tree/master/dev_env82)
+
+### MySQL 도커 컨테이너
+
+MySQL 의 경우 나의 업무 중 시간권과 관련하여 민감한 부분이 있어 부득이하게 시간권을 설정해야 했다. 그래서 기존 MySQL 최신 컨테이너 Dockerfile을 약간 수정하여 사옹한다. 그리고 인증 함수도 변경한다.
+
+* config : MySQL 필수 환경설정 파일
+* Dockerfile : 도커 이미지 빌드용 파일
+* docker_entrypoint.sh : 컨테이너 실행 시 실행될 스크립트
+
