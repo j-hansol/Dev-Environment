@@ -47,8 +47,7 @@ PHP 버전별 컨테이느는 아래와 같이 3개로 구성하고 각각에 �
 * docker_entrypoint.sh : 컨테이너 실행 시 실행될 스크립트
 * drush : Drupal 7.x 사이트 관리 도구
 * index.php : 컨테이너에서 관리 중인 사이트 도우미 프로그램
-* site.conf : 멀티 호스트 도매인 사이트용 Apache2 환경설정 파일
-* sites.conf : 일반적인 사이트를 위한 Apache2 환경설정 파일
+* confs : Apache site 환경설정 파일
 * svhost.sh : 멀티 호스트 도매인 사이트, 일반적인 사이트 운영 모드 변경옹 스크립트
 
 위 파일 중 ```drush```를 제외한 너머지 파일은 내용은 조검씩 다를 수 있으나 기능이 같다. 그래서 나머지 컨테이너에서는 잠시 생락한다.
@@ -132,7 +131,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
 그 외 컨테이너 실행 시 필요한 Apache 환경설정 파일 사이트 관리 도우미, 자체 서명한 ssl 키, 데이터베이스 관리용 도구 등을 각각의 폴더에 복사한다.
 ```
 RUN rm -f /etc/apache2/sites-available/* /etc/apache2/sites-enabled/*
-COPY site*.conf /etc/apache2/sites-available
+COPY confs/* /etc/apache2/sites-available
 COPY index.php /var/www/html/index.php
 COPY svhost.sh /usr/bin/svhost
 COPY ssl_key/* /etc/ssl/private
@@ -140,4 +139,67 @@ ADD myadmin /var/www/html/myadmin
 RUN chmod 0755 /usr/bin/svhost
 ```
 
-각종 개발 욉사이트가 위치할 공유 폴더를 생성한다. 공유 폴더는 ```/DevHome
+각종 개발 욉사이트가 위치할 공유 폴더를 생성한다. 공유 폴더는 ```/DevHome```생성한다.
+```
+RUN mkdir /DevHome
+```
+
+각 버전별 도커 컨테이너는 ```sites```, ```domains``` 등 두 개의 모드로 운영된다. 이 모드에 따라 각 프로젝트 폴더에 쉽게 접근 가능하도록 아래외 같은 스크립트를 ```.bashrc``` 파일에 첨가한다.
+```
+RUN echo "\nif [ -e \"/etc/apache2/sites-enabled/sites.conf\" ]\nthen\n\tcd /DevHome/sites\nelif [ -e \"/etc/apache2/sites-enabled/domains.conf\" ]\nthen\n\tcd /DevHome/domains\nfi" >> /root/.bashrc
+```
+위 코드는 아래와 같이 추가된다.
+```
+if [ -e \"/etc/apache2/sites-enabled/sites.conf\" ]
+then
+	cd /DevHome/sites
+elif [ -e \"/etc/apache2/sites-enabled/domains.conf\" ]
+then
+	cd /DevHome/domains
+fi
+```
+
+### docker_entrypoint.sh
+도커 컨테이너가 실행 될 때 아래와 같이 Apache 서비스를 실행한다. ```svhost init``` 은 초기화의 의미로 최초 실행하는 것을 말한다.
+```
+#!/bin/bash
+
+/usr/bin/svhost init
+exec "$@"
+```
+
+### svhost.sh
+파일은 ```/usr/bin/svhost``` 파일로 복사되어 기본 명령어로 사용된다. 이 스크립트 파일은 Apache 서비스를 실행하고 제어하는 일을 한다.
+파일 내용은 아래와 같다.
+```
+#!/bin/bash
+
+case $1 in
+    init)
+        a2ensite sites
+        service apache2 start
+        ;;
+    sites)
+        a2dissite domains
+        a2ensite sites
+        service apache2 reload
+        ;;
+    domains)
+        a2dissite sites
+        a2ensite domains
+        service apache2 reload
+        ;;
+    start)
+        service apache2 start
+        ;;
+    stop)
+        service apache2 stop
+        ;;
+    *)
+        echo "Usage : svhost <sites|domains>" %>2
+        ;;
+esac
+
+echo "Done..."
+```
+
