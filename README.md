@@ -203,3 +203,14 @@ esac
 echo "Done..."
 ```
 
+### confs 
+confs 폴더에는 Apache 서비스를 통해 서비스될 사이트 설정 정보가 저장된 두 파일을 가지고 있다. 이 설정 파일은 vhost_alias 모듈을 이용하여 ```VirtualDocumentRoot``` 를 이용하여 동적인 Document Root를 지정한다.
+
+* domains.conf : 도매인 단위의 사이트 설정파일
+* sites.conf : 개별 사이트 설정 파일
+
+### ssl_key
+자체 서명한 키 파일을 가지고 있다. 이 파일은 위의 ```domain.conf```, ```sites.conf``` 설정 파일에서 이용한다.
+
+### myadmin
+PHPMyAdmin을 도커 환경에 맞게 데이터베이스 계정 정보 및 연결 호스트명을 적용한 파일들이 보관되어 있다.
