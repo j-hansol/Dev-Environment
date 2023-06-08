@@ -1,14 +1,14 @@
 <?php
     function checkSites() {
         if(file_exists('/etc/apache2/sites-enabled/sites.conf')) return 1;
-        elseif(file_exists('/etc/apache2/sites-enabled/site.conf')) return 0;
+        elseif(file_exists('/etc/apache2/sites-enabled/domains.conf')) return 0;
         else return -1;
     }
 
     $is_sites = checkSites();
     $part_name = null;
     if($is_sites == 1) $part_name = '일반';
-    elseif($is_sites == 0) $part_name = '멀티 호스트 도매인 사이트';
+    elseif($is_sites == 0) $part_name = '도매인 사이트';
     else $part_name = '미설정';
 
     $domain_suffix = "wd";
@@ -37,7 +37,7 @@
         }
     }
     elseif($is_sites == 0) {
-        $base = '/DevHome/site';
+        $base = '/DevHome/domains';
         $dh = opendir( $base );
         if($dh) {
             while( ($entry = readdir( $dh )) ) {

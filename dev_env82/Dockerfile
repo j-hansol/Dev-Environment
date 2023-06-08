@@ -39,7 +39,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
     rm -f composer-setup.php
 
 RUN rm -f /etc/apache2/sites-available/* /etc/apache2/sites-enabled/*
-COPY site*.conf /etc/apache2/sites-available
+COPY confs/* /etc/apache2/sites-available
 COPY index.php /var/www/html/index.php
 COPY svhost.sh /usr/bin/svhost
 COPY ssl_key/* /etc/ssl/private
@@ -52,7 +52,7 @@ RUN mkdir /DevHome
 RUN rm -r /var/lib/apt/lists /var/cache/apt/archives
 ENV LC_ALL=C.UTF-8
 
-RUN echo "\nif [ -e \"/etc/apache2/sites-enabled/sites.conf\" ]\nthen\n\tcd /DevHome/sites\nelif [ -e \"/etc/apache2/sites-enabled/site.conf\" ]\nthen\n\tcd /DevHome/site\nfi" >> /root/.bashrc
+RUN echo "\nif [ -e \"/etc/apache2/sites-enabled/sites.conf\" ]\nthen\n\tcd /DevHome/sites\nelif [ -e \"/etc/apache2/sites-enabled/domains.conf\" ]\nthen\n\tcd /DevHome/domains\nfi" >> /root/.bashrc
 
 VOLUME [ "/DevHome" ]
 

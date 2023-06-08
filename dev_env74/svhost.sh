@@ -6,13 +6,13 @@ case $1 in
         service apache2 start
         ;;
     sites)
-        a2dissite site
+        a2dissite domains
         a2ensite sites
         service apache2 reload
         ;;
-    site)
+    domains)
         a2dissite sites
-        a2ensite site
+        a2ensite domains
         service apache2 reload
         ;;
     start)
@@ -22,7 +22,7 @@ case $1 in
         service apache2 stop
         ;;
     *)
-        echo "Usage : svhost <sites|site>" %>2
+        echo "Usage : svhost <sites|domains>" %>2
         ;;
 esac
 
