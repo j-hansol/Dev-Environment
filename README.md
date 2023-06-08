@@ -275,7 +275,7 @@ RUN cp /tars/mecab-ko-lucene-analyzer-0.21.0/mecab-ko-mecab-loader-0.21.0.jar /o
 
 ### domains.conf
 이 설정 파일은 도메인 단위의 사이트를 구성할 목적으로 생성된 것으로 아래와 같은 폴더 구조를 가진다.
-단 아래 폴드에는 ```dev_doc_root``` 폴더나 심블릭 링크가 존재해야 한다.
+단 아래 폴더에는 DocumentRoot 펄더로 ```dev_doc_root``` 폴더나 심블릭 링크가 존재해야 한다.
 ```
 domains
 +- abc : abc 프로젝트 폴더 아래의 경우 모두 이 폴더로 연결됨
@@ -291,5 +291,144 @@ domains
 
 설정 파일은 아래와 같다.
 ```
+<VirtualHost *:80>
+    ServerName localhost
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html
 
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <Directory /var/www/html>
+        DirectoryIndex index.php index.html index.htm
+        Options Indexes FollowSymLinks Multiviews
+        AllowOverride All
+        Order allow,deny
+        Allow from All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName domains.wd
+    ServerAlias *.*.wd
+
+    ServerAdmin webmaster@localhost
+    VirtualDocumentRoot /DevHome/domains/%2/dev_doc_root
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <Directory /DevHome/domains/*/dev_doc_root>
+        DirectoryIndex index.php index.html index.htm
+        Options Indexes FollowSymLinks Multiviews
+        AllowOverride All
+        Order allow,deny
+        Allow from All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName domains.wd
+    ServerAlias *.*.wd
+
+    ServerAdmin webmaster@localhost
+    VirtualDocumentRoot /DevHome/domains/%2/dev_doc_root
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <Directory /DevHome/domains/*/dev_doc_root>
+        DirectoryIndex index.php index.html index.htm
+        Options Indexes FollowSymLinks Multiviews
+        AllowOverride All
+        Order allow,deny
+        Allow from All
+        Require all granted
+    </Directory>
+
+    SSLEngine on
+    SSLCertificateKeyFile /etc/ssl/private/dev.key
+    SSLCertificateFile /etc/ssl/private/dev.crt
+</VirtualHost>
+```
+
+### sites.conf
+이 설정 파일은 개별 사이트를 위한 설정이다. 이 설정은 ```다큐먼트루터폴더.프로젝트 폴더.wd``` 형태로 연결되도록 한다.
+이 설정은 DocumentRoot 폴더를 고정하지는 않는다. 위의 도매인 주소 입력 규칙에 따라 DocumentRoot 펄더가 지정되는 방식이다.
+```
+sites
++- shop
+|  +- www : www.shop.wd 로 접속 가능하다.
+|
++- cafe
+   +- store : store.cafe.wd 로 접속 가능하다.
+```
+
+설정 파일 내용은 아래와 같다.
+```
+<VirtualHost *:80>
+    ServerName admin.sites.wd
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <Directory /var/www/html>
+        DirectoryIndex index.php index.html index.htm
+        Options Indexes FollowSymLinks Multiviews
+        AllowOverride All
+        Order allow,deny
+        Allow from All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName sites.wd
+    ServerAlias *.*.wd
+    UseCanonicalName Off
+
+    ServerAdmin webmaster@localhost
+    VirtualDocumentRoot /DevHome/sites/%2/%1
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <Directory /DevHome/sites/*/*>
+        DirectoryIndex index.php index.html index.htm
+        Options Indexes FollowSymLinks Multiviews
+        AllowOverride All
+        Order allow,deny
+        Allow from All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName sites.wd
+    ServerAlias *.*.wd
+    UseCanonicalName Off
+
+    ServerAdmin webmaster@localhost
+    VirtualDocumentRoot /DevHome/sites/%2/%1
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <Directory /DevHome/sites/*/*>
+        DirectoryIndex index.php index.html index.htm
+        Options Indexes FollowSymLinks Multiviews
+        AllowOverride All
+        Order allow,deny
+        Allow from All
+        Require all granted
+    </Directory>
+
+    SSLEngine on
+    SSLCertificateKeyFile /etc/ssl/private/dev.key
+    SSLCertificateFile /etc/ssl/private/dev.crt
+</VirtualHost>
 ```
