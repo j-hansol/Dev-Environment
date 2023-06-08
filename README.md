@@ -150,10 +150,10 @@ RUN echo "\nif [ -e \"/etc/apache2/sites-enabled/sites.conf\" ]\nthen\n\tcd /Dev
 ```
 위 코드는 아래와 같이 추가된다.
 ```
-if [ -e \"/etc/apache2/sites-enabled/sites.conf\" ]
+if [ -e "/etc/apache2/sites-enabled/sites.conf" ]
 then
 	cd /DevHome/sites
-elif [ -e \"/etc/apache2/sites-enabled/domains.conf\" ]
+elif [ -e "/etc/apache2/sites-enabled/domains.conf" ]
 then
 	cd /DevHome/domains
 fi
@@ -214,3 +214,82 @@ confs 폴더에는 Apache 서비스를 통해 서비스될 사이트 설정 정�
 
 ### myadmin
 PHPMyAdmin을 도커 환경에 맞게 데이터베이스 계정 정보 및 연결 호스트명을 적용한 파일들이 보관되어 있다.
+
+### MySQL Dockerfile
+MySQL 공식 Dockerfile에 시간권을 서울로 설정하는 부분만을 추가했다.
+```
+RUN rm -f /etc/localtime
+RUN ln -s /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+```
+
+### Solr Dockerfile
+Apache Solr 검색엔진을 운용하기 위한 컨테이너를 생성한다.
+아래와 같이 Apache Solr 5.5.5를 공식 사이트에서 내려 받아 설치한다.
+```
+ADD tars tars
+ADD https://archive.apache.org/dist/lucene/solr/5.5.5/solr-5.5.5.tgz tars/solr-5.5.5.tgz
+
+RUN cd tars;\
+    tar xvzf solr-5.5.5.tgz;\
+    mv solr-5.5.5 /opt;\
+    cd /opt;\
+    ln -s solr-5.5.5/ solr
+```
+
+한글 형태소 분석기와 사전을 컴파일하여 
+```
+RUN cd /tars;\
+    tar xvzf mecab-0.996-ko-0.9.2.tar.gz;\
+    tar xvzf mecab-ko-dic-2.0.3-20170922.tar.gz;\
+    tar xvzf mecab-ko-lucene-analyzer-0.21.0.tar.gz;\
+    tar xvzf mecab-java-0.996.tar.gz;\
+    rm -f mecab-java-0.996/Makefile
+
+RUN cd /tars/mecab-0.996-ko-0.9.2;\
+    ./configure;\
+    make;\
+    make install
+
+RUN ldconfig;\
+    cd /tars/mecab-ko-dic-2.0.3-20170922;\
+    ./configure;\
+    make;\
+    make install
+```
+
+사전을 설치하고, Apache Solr용 형태소 분석기 연동 모듈을 설치한다. 그리고 검색엔진 설정(Core) 저장용 폴더를 생성한다. (```/opt/solr/server/solr/cores```)
+```
+RUN cd /tars/mecab-java-0.996;\
+    make
+RUN mv /tars/mecab-java-0.996/MeCab.jar /opt/solr/server/lib/ext;\
+    mv /tars/mecab-java-0.996/libMeCab.so /usr/local/lib
+    
+RUN cp /tars/mecab-ko-lucene-analyzer-0.21.0/mecab-ko-mecab-loader-0.21.0.jar /opt/solr/server/lib/ext/;\
+    mkdir -p /opt/solr/contrib/eunjeon/lib;\
+    cp /tars/mecab-ko-lucene-analyzer-0.21.0/mecab-ko-lucene-analyzer-0.21.0.jar /opt/solr/contrib/eunjeon/lib;\
+    rm -rf /tars;\
+    mkdir -p /opt/solr/server/solr/cores
+```
+
+## Apache site configration
+
+### domains.conf
+이 설정 파일은 도메인 단위의 사이트를 구성할 목적으로 생성된 것으로 아래와 같은 폴더 구조를 가진다.
+단 아래 폴드에는 ```dev_doc_root``` 폴더나 심블릭 링크가 존재해야 한다.
+```
+domains
++- abc : abc 프로젝트 폴더 아래의 경우 모두 이 폴더로 연결됨
+|        - www.abc.wd
+|        - public.abc.wd
+|        - store.abc.wd
+|
++- public : public 프로젝트 폴더
+            - www.public.wd
+            - store.public.wd
+            - shop.public.wd
+```
+
+설정 파일은 아래와 같다.
+```
+
+```

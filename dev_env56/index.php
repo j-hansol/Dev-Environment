@@ -16,6 +16,7 @@
     $docroots = array(
         'docroot', 'public', 'public_html', 'www', 'html', 'web'
     );
+    $dev_docroot = 'dev_doc_root';
 
     if($is_sites == 1) {
         $base = '/DevHome/sites';
@@ -42,7 +43,8 @@
         if($dh) {
             while( ($entry = readdir( $dh )) ) {
                 if( $entry == '..' || $entry == '.' ) continue;
-                if( filetype( $base . '/' . $entry ) == 'dir' ) {
+                $tpath = $base . '/' . $entry . '/' . $dev_docroot;
+                if( filetype( $tpath ) == 'dir' || filetype( $tpath ) == 'link' ) {
                     $sites[] = array(
                         'https_url' => "https://www.$entry.$domain_suffix",
                         'http_url' => "http://www.$entry.$domain_suffix",
