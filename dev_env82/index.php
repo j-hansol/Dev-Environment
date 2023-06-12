@@ -9,7 +9,7 @@
         if(is_link('/etc/apache2/sites-enabled/domains.conf')) {
             $source = readlink('/etc/apache2/sites-enabled/domains.conf');
             $t = explode('.', $source);
-            return isset($t[1]) $t[1] : null;
+            return isset($t[1]) ? $t[1] : null;
         }
         else return  null;
     }
@@ -45,7 +45,7 @@
             }
         }
     }
-    elseif($is_sites == 0 && ($domain_docroot = getDocRoot)) != null) {
+    elseif($is_sites == 0 && ($domain_docroot = getDocRoot()) != null) {
         $base = '/DevHome/domains';
         $dh = opendir( $base );
         if($dh) {
