@@ -5,6 +5,15 @@
         else return -1;
     }
 
+    function getDocRoot() {
+        if(is_link('/etc/apache2/sites-enabled/domains.conf')) {
+            $source = readlink('/etc/apache2/sites-enabled/domains.conf');
+            $t = explode('.', $source);
+            return isset($t[1]) $t[1] : null;
+        }
+        else return  null;
+    }
+
     $is_sites = checkSites();
     $part_name = null;
     if($is_sites == 1) $part_name = '일반';
@@ -36,21 +45,18 @@
             }
         }
     }
-    elseif($is_sites == 0) {
+    elseif($is_sites == 0 && ($domain_docroot = getDocRoot)) != null) {
         $base = '/DevHome/domains';
         $dh = opendir( $base );
         if($dh) {
             while( ($entry = readdir( $dh )) ) {
-                foreach( $docroots as $docroot ) {
-                    if( $entry == '..' || $entry == '.' ) continue;
-                    if( filetype( $base . '/' . $entry . '/' . $docroot ) == 'dir' ) {
-                        $sites[] = array(
-                            'https_url' => "https://www.$entry.$domain_suffix",
-                            'http_url' => "http://www.$entry.$domain_suffix",
-                            'sitename' => $entry
-                        );
-                    }
-                    break;
+                if( $entry == '..' || $entry == '.' ) continue;
+                if( filetype( $base . '/' . $entry . '/' . $domain_docroot ) == 'dir' ) {
+                    $sites[] = array(
+                        'https_url' => "https://www.$entry.$domain_suffix",
+                        'http_url' => "http://www.$entry.$domain_suffix",
+                        'sitename' => $entry
+                    );
                 }
             }
         }
