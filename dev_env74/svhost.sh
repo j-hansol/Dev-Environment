@@ -58,8 +58,11 @@ case $1 in
     sites)
         if [ 1 -eq check_available_conf("sites.conf") ]; then
             unlink("domains.conf")
-            sites_link
-            service apache2 reload
+            if [ 1 -eq sites_link ]; then
+                service apache2 reload
+            else
+                echo "Cannot switch modes." %>2
+            fi
         else
             echo "Cannot switch modes." %>2
         fi
@@ -68,8 +71,11 @@ case $1 in
         if [ -nz $2 ]; then
             if [ 1 -eq check_available_conf("domains.$2.conf") ]; then
                 unlink("sites.conf")
-                domain_link("domains.$2.conf")
-                service apache2 reload
+                if [ 1 -eq domain_link("domains.$2.conf") ]; then
+                    service apache2 reload
+                else
+                    echo "Cannot switch modes." %>2
+                fi
             else
                 echo "Cannot switch modes." %>2
             fi
