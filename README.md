@@ -70,7 +70,7 @@ MySQL 의 경우 나의 업무 중 시간권과 관련하여 민감한 부분이
 이 컨테이너는 검색엔진의 한 종류인 Apache Solr를 위한 컨테이너로 지금도 유지보수 중인 Drupal 7.x와 Apache Solr 5.5.5 연동을 위해 먼들어졌다. 기존 Solr 설정에 한국어 형태소 은전한닢 프로젝트의 형태소 분식기를 적용하고, Drupal의 필드시스템과 연동 가능하도록 각종 필드 타입을 설정한다. 파일 구성은 아래와 같다. 자세한 내용은 [solr](https://github.com/j-hansol/Dev-Environment/tree/master/solr)에서 확인할 수 있다.
 
 * confs/drupal : 드루팔용 설정파일 폴더
-* make_files : 형태소 분석기 빌드용 메이퍼파일 폴더
+* make_files : 형태소 분석기 빌드용 메이커파일 폴더
 * tars : 형태소 분석기, 사전파일 등의 압축파일 폴더
 * Dockerfile : 도커 이미지 빌드용 파일
 * docker_entrypoint.sh : 컨테이너 실행 시 실행될 스크립트
