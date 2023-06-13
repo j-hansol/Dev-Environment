@@ -11,7 +11,7 @@ function check_available_conf()
     fi
 }
 
-# 파일 섹제
+# 파일 삭제
 function unlink()
 {
     file="/etc/apache2/sites-enabled/$1"
