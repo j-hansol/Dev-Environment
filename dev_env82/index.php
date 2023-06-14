@@ -6,12 +6,21 @@
     }
 
     function getDocRoot() {
-        if(is_link('/etc/apache2/sites-enabled/domains.conf')) {
-            $source = readlink('/etc/apache2/sites-enabled/domains.conf');
-            $t = explode('.', $source);
-            return isset($t[1]) ? $t[1] : null;
+        // if(is_link('/etc/apache2/sites-enabled/domains.conf')) {
+        //     $source = readlink('/etc/apache2/sites-enabled/domains.conf');
+        //     $t = explode('.', $source);
+        //     return isset($t[1]) ? $t[1] : null;
+        // }
+        // else return  null;
+        $conf = '/etc/apache2/sites-enabled/domains.conf';
+        if(file_exists($conf)) {
+            $content = file_get_contents($conf, true);
+            preg_match_all('/\/DevHome\/domains\/%2\/(.*)/', $content, $matches);
+            if(count($matches) == 2) {
+                return reset($matches[1]);
+            }
         }
-        else return  null;
+        return null;
     }
 
     $is_sites = checkSites();
