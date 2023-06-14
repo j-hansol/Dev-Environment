@@ -18,7 +18,7 @@
 * PHP 버전별 도커 컨테이너, 데이터베이스 컨테이너, Apache Solr 컨테이너
 * 내부 도매인 주소 공유를 위한 도구 (DNsmasq, Acrylic Dns proxy)
 
-# PHP 버전별 도커 컨테이너
+## PHP 버전별 도커 컨테이너
 
 PHP 버전별 컨테이느는 아래와 같이 3개로 구성하고 각각에 태그를 붙여 도커허브에 저장한다.
 
@@ -26,13 +26,13 @@ PHP 버전별 컨테이느는 아래와 같이 3개로 구성하고 각각에 �
 * pig482/devenv:p74 : PHP 7.4용 컨테이너
 * pig482/devenv:p82 : PHP 8.2용 컨테이너
 
-# 데이터베이스 도커 컨테이너
+## 데이터베이스 도커 컨테이너
 
 프로젝트 중 시간권 문제에 민감한 것이 있어 기존 MySQL 공식 도커 이미지의 도커 Dockerfile을 수정하여 이용한다.
 
 * pig482/mysql:kr : 시간권을 서울로 지정한 MySQL 데이터베이스
 
-# 검색엔진 도커 컨테이너
+## 검색엔진 도커 컨테이너
 
 중유 유지보수 사이트의 경우 검색인진 기능이 탑제되어 있고, 검색엔진 기능은 Apache Solr를 이용한다. 이에 해당 도커 컨테이너를 생성한다.
 
@@ -42,7 +42,7 @@ PHP 버전별 컨테이느는 아래와 같이 3개로 구성하고 각각에 �
 컨테이너 빌더 리소스 구성
 -----------------------
 
-# PHP 도커 칸테이너 빌드 구성 파일
+## PHP 도커 칸테이너 빌드 구성 파일
 
 각 버전에 따라 약간 내용이 다를 수 있으나 대부분 아래와 같이 파일을 구성한다.
 
@@ -61,7 +61,7 @@ PHP 버전별 컨테이느는 아래와 같이 3개로 구성하고 각각에 �
 * [PHP 7.4](https://github.com/j-hansol/Dev-Environment/tree/master/dev_env74)
 * [PHP 8.2](https://github.com/j-hansol/Dev-Environment/tree/master/dev_env82)
 
-# MySQL 도커 컨테이너 빌드 구성 파일
+## MySQL 도커 컨테이너 빌드 구성 파일
 
 MySQL 의 경우 나의 업무 중 시간권과 관련하여 민감한 부분이 있어 부득이하게 시간권을 설정해야 했다. 그래서 기존 MySQL 최신 컨테이너 Dockerfile을 약간 수정하여 사옹한다. 그리고 인증 함수도 변경한다. 자세한 내용은 [Mysql_kr](https://github.com/j-hansol/Dev-Environment/tree/master/mysql_kr)에서 확인할 수 있다.
 
@@ -69,7 +69,7 @@ MySQL 의 경우 나의 업무 중 시간권과 관련하여 민감한 부분이
 * Dockerfile : 도커 이미지 빌드용 파일
 * docker_entrypoint.sh : 컨테이너 실행 시 실행될 스크립트
 
-# Solr 도커 컨테이너 빌드 구성 파일
+## Solr 도커 컨테이너 빌드 구성 파일
 
 이 컨테이너는 검색엔진의 한 종류인 Apache Solr를 위한 컨테이너로 지금도 유지보수 중인 Drupal 7.x와 Apache Solr 5.5.5 연동을 위해 먼들어졌다. 기존 Solr 설정에 한국어 형태소 은전한닢 프로젝트의 형태소 분식기를 적용하고, Drupal의 필드시스템과 연동 가능하도록 각종 필드 타입을 설정한다. 파일 구성은 아래와 같다. 자세한 내용은 [solr](https://github.com/j-hansol/Dev-Environment/tree/master/solr)에서 확인할 수 있다.
 
@@ -84,7 +84,7 @@ MySQL 의 경우 나의 업무 중 시간권과 관련하여 민감한 부분이
 
 이미 알고 있는 구성 파일에서는 여기서만 적용되어 있는 내용 위주로 설명하고, 추가된 구성 파일에 대해서는 보다 자세하게 설명하려고 한다.
 
-# PHP Dockerfile
+## PHP Dockerfile
 
 각 버전의 Dockerfile에는 아래와 MySQL 클라이언트와 Apache2, 동적 사이트 설정이 가능하도록 vhost_alias, rewrite, ssl Apache module을 활성화한다.
 ```
@@ -173,7 +173,7 @@ then
 fi
 ```
 
-# docker_entrypoint.sh
+## docker_entrypoint.sh
 도커 컨테이너가 실행 될 때 아래와 같이 Apache 서비스를 실행한다. ```svhost init``` 은 초기화의 의미로 최초 실행하는 것을 말한다.
 ```
 #!/bin/bash
@@ -182,7 +182,7 @@ fi
 exec "$@"
 ```
 
-# svhost.sh
+## svhost.sh
 파일은 ```/usr/bin/svhost``` 파일로 복사되어 기본 명령어로 사용된다. 이 스크립트 파일은 Apache 서비스를 실행하고 제어하는 일을 한다.
 파일 내용은 아래와 같다.
 ```
@@ -287,22 +287,22 @@ esac
 echo "Done..."
 ```
 
-# confs 
+## confs 
 confs 폴더에는 Apache 서비스를 통해 서비스될 사이트 설정 정보가 저장된 두 파일을 가지고 있다. 이 설정 파일은 vhost_alias 모듈을 이용하여 ```VirtualDocumentRoot``` 를 이용하여 동적인 Document Root를 지정한다.
 
 * domains.conf : 도매인 단위의 사이트 설정파일
 * sites.conf : 개별 사이트 설정 파일
 
-# ssl_key
+## ssl_key
 자체 서명한 키 파일을 가지고 있다. 이 파일은 위의 ```domain.conf```, ```sites.conf``` 설정 파일에서 이용한다.
 
-### myadmin
+## myadmin
 PHPMyAdmin을 도커 환경에 맞게 데이터베이스 계정 정보 및 연결 호스트명을 적용한 파일들이 보관되어 있다.
 
 Apache site configration
 -------------------------
 
-# domains.conf
+## domains.conf
 이 설정 파일은 도메인 단위의 사이트를 구성할 목적으로 생성된 것으로 아래와 같은 폴더 구조를 가진다.
 단 아래 폴더에는 DocumentRoot 펄더로 ```dev_doc_root``` 폴더나 심블릭 링크가 존재해야 한다.
 ```
@@ -383,7 +383,7 @@ domains
 </VirtualHost>
 ```
 
-# sites.conf
+## sites.conf
 이 설정 파일은 개별 사이트를 위한 설정이다. 이 설정은 ```다큐먼트루터폴더.프로젝트 폴더.wd``` 형태로 연결되도록 한다.
 이 설정은 DocumentRoot 폴더를 고정하지는 않는다. 위의 도매인 주소 입력 규칙에 따라 DocumentRoot 펄더가 지정되는 방식이다.
 ```
@@ -465,7 +465,7 @@ sites
 Volume 구성
 -----------
 
-# PHP
+## PHP
 DevHome : 웹사이트 기본 디렉토리
 ```
 DevHome
@@ -477,10 +477,10 @@ DevHome
    +- project2
 ```
 
-# MySQL
+## MySQL
 /var/lib/mysql : 데이터 저장소 디렉토리
 
-# Apache Solr
+## Apache Solr
 /opt/solr/server/solr/cores : 검색엔진 코어 저장소 디렉토리
 ```
 /opt/solr/server/solr/cores
@@ -493,13 +493,13 @@ DevHome
 Port 노출
 ---------
 
-# PHP
+## PHP
 80(Http), 443(Https)
 
-# MySQL
+## MySQL
 3306 (기본 포트)
 
-# Solr
+## Solr
 8983(전용)
 
 주요 명령
@@ -507,7 +507,7 @@ Port 노출
 
 아래 명령은 ```docker-compose.yml``` 을 이용하여 개발환경을 실행하는 것을 기본으로 한다.
 
-# 사이트 모드 변경
+## 사이트 모드 변경
 개별 사이트 개발 모드
 ```
 docker-compose exec web svhost sites
@@ -535,7 +535,7 @@ docker-compose exec web bash
 
 나의 경우 로컬 개발환경에 다양한 사이트를 윺지보수하고, 새로운 프로젝트를 진행해야 한다. 그것도 짧은 시간에 전환하여 작업을 진행해야 한다. PHP의 버전이 다른 경우에는 어쩔 수 없이 도커 컨테이너를 재실행햐야 하지만 같은 버전이라면 단순히 프로젝트 소스를 불러 오는 작업으로 전환이 가능해야 한다. 이를 위해 위의 모드 변경 기능과 함께 로컬 개발환경용 도매인 설정이나 이용이 용이해야 한다. 여기에 유용한 도구가 두 가지가 있는데, 아래의 Dnsmasq, Arcylic DNS Proxy 이다. 앞의 것은 Mac용이고 후자는 Windows 용이다.
 
-# Dnsmasq 설치
+## Dnsmasq 설치
 
 설치 순서는 아래와 같다.
 1. Xcode 설치
@@ -545,22 +545,22 @@ docker-compose exec web bash
 5. 버그 수정
 6. 데몬 실행
 
-## Xcode 설치
+### Xcode 설치
 ```
 xcode-select --install
 ```
 
-## Homebrew 설치
+### Homebrew 설치
 ```
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-## Dnsmasq 설치
+### Dnsmasq 설치
 ```
 brew install dnsmasq
 ```
 
-## Dnsmasq 설정
+### Dnsmasq 설정
 ```
 cd $(brew --prefix); mkdir etc; echo 'address=/.wd/127.0.0.1' > etc/dnsmasq.conf
 sudo mkdir /etc/resolver
@@ -569,7 +569,7 @@ sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/wd'
 sudo cp -v $(brew --prefix dnsmasq)/homebrew.mxcl.dnsmasq.plist /Library/LaunchDaemons
 ```
 
-## 버그 수정
+### 버그 수정
 ```
 sudo cp -v $(brew --prefix dnsmasq)/homebrew.mxcl.dnsmasq.plist /Library/LaunchDaemons
 ```
@@ -580,7 +580,7 @@ sudo cp -v $(brew --prefix dnsmasq)/homebrew.mxcl.dnsmasq.plist /Library/LaunchD
 <string>/usr/local/etc/dnsmasq.d,*.conf</string>
 ```
 
-## 데몬 실행
+### 데몬 실행
 ```
 sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
 ```
