@@ -16,8 +16,7 @@ function domain_link()
     if [ -e $file ]; then
         sed -i "s/\/DevHome\/domains\/%2\/.*$/\/DevHome\/domains\/%2\/$1/g" $file
         sed -i "s/\/DevHome\/domains\/\*\/[^>]*/\/DevHome\/domains\/\*\/$1/g" $file
-        if [ ! -e "/etc/apache2/sites-enabled/domains.conf" ]
-        then
+        if [ ! -e "/etc/apache2/sites-enabled/domains.conf" ]; then
             ln -s $file "/etc/apache2/sites-enabled/domains.conf"
         fi
         echo 1
@@ -30,8 +29,10 @@ function domain_link()
 function sites_link()
 {
     file="/etc/apache2/sites-available/sites.conf"
-    if [ -e $file -a ! -e "/etc/apache2/sites-enabled/sites.conf" ]; then
-        ln -s $file "/etc/apache2/sites-enabled/sites.conf"
+    if [ -e $file ]; then
+        if [ ! -e "/etc/apache2/sites-enabled/sites.conf" ]; then
+            ln -s $file "/etc/apache2/sites-enabled/sites.conf"
+        fi
         echo 1
     else
         echo 0
