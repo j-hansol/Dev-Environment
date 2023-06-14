@@ -188,17 +188,6 @@ exec "$@"
 ```
 #!/bin/bash
 
-# 파일 체크
-function check_available_conf()
-{
-    file="/etc/apache2/sites-available/$1"
-    if [ -e $file ]; then
-        echo 1
-    else
-        echo 0;
-    fi
-}
-
 # 파일 삭제
 function unlink()
 {
@@ -211,10 +200,13 @@ function unlink()
 # 도메인 기반 사이트 환경설정 활성화
 function domain_link()
 {
-    unlink "domains.conf"
-    file="/etc/apache2/sites-available/$1"
+    file="/etc/apache2/sites-available/domains.conf"
     if [ -e $file ]; then
-        ln -s $file "/etc/apache2/sites-enabled/domains.conf"
+        sed -i "s/\/DevHome\/domains\/%2\/.*$/\/DevHome\/domains\/%2\/$1/g" $file
+        sed -i "s/\/DevHome\/domains\/\*\/[^>]*/\/DevHome\/domains\/\*\/$1/g" $file
+        if [ ! -e "/etc/apache2/sites-enabled/domains.conf" ]; then
+            ln -s $file "/etc/apache2/sites-enabled/domains.conf"
+        fi
         echo 1
     else
         echo 0;
@@ -224,10 +216,11 @@ function domain_link()
 # 개별 사이트 환경설정 활성화
 function sites_link()
 {
-    unlink "sites.conf"
     file="/etc/apache2/sites-available/sites.conf"
     if [ -e $file ]; then
-        ln -s $file "/etc/apache2/sites-enabled/sites.conf"
+        if [ ! -e "/etc/apache2/sites-enabled/sites.conf" ]; then
+            ln -s $file "/etc/apache2/sites-enabled/sites.conf"
+        fi
         echo 1
     else
         echo 0
@@ -243,31 +236,21 @@ case $1 in
         fi
         ;;
     sites)
-        chk=$(check_available_conf "sites.conf")
-        if [ 1 == $chk ]; then
-            unlink "domains.conf"
-            if [ $(sites_link) -eq 1 ]; then
-                service apache2 reload
-            else
-                echo "Cannot switch modes."
-            fi
+        unlink "domains.conf"
+        if [ $(sites_link) -eq 1 ]; then
+            service apache2 reload
         else
-            echo "Cannot switch modes."
+            echo "Cannot switch mode."
         fi
         ;;
     domains)
         if [ -n $2 ]; then
-            chk=$(check_available_conf "domains.$2.conf")
-            if [ 1 -eq $chk ]; then
-                unlink "sites.conf"
-                ret=$(domain_link "domains.$2.conf")
-                if [ 1 -eq $ret ]; then
-                    service apache2 reload
-                else
-                    echo "Cannot switch modes."
-                fi
+            unlink "sites.conf"
+            ret=$(domain_link $2)
+            if [ 1 -eq $ret ]; then
+                service apache2 reload
             else
-                echo "Cannot switch modes."
+                echo "Cannot switch mode."
             fi
         else
             echo "Type document root."
