@@ -590,6 +590,7 @@ sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
 ![호스트 설정](assets/20230615_200636.png)
 
 이렇게 입력한 후 ```File``` > ```Save``` 메뉴를 클릭하여 저장하면 서비스가 재실행된다. 만일 서비스가 재실행되지 않으면 ```Restart Arcylic Service```를 클릭하여 서비스를 재실행한다.
+
 ![서비스 재실행](assets/20230615_202344.png)
 
 ### 네트워크 어답터 설정
