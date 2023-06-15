@@ -287,7 +287,7 @@ Apache site configration
 
 ## domains.conf
 이 설정 파일은 도메인 단위의 사이트를 구성할 목적으로 생성된 것으로 아래와 같은 폴더 구조를 가진다.
-단 아래 폴더에는 DocumentRoot 펄더로 ```dev_doc_root``` 폴더나 심블릭 링크가 존재해야 한다.
+단 아래 폴더에는 DocumentRoot 펄더로 개발 프로젝트 환경에 맞게 지정할 수 있다.
 ```
 domains
 +- abc : abc 프로젝트 폴더 아래의 경우 모두 이 폴더로 연결됨
