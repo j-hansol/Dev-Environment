@@ -579,5 +579,20 @@ sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
 공식 사이트 [Acrylic DNS Proxy](https://mayakron.altervista.org/support/acrylic/Home.htm)에 접속하여 셋업 프로그램을 다운로드하여 설치한다.
 
 ### 도매인 설정
+이재 로컬에서 개발용으로 사용할 도매인 설정을 진행한다. 설정을 하기 위해 ```Arcylic DNS Proxy UI``` 를 실행한다.
+실행 한 후 ```File``` 메뉴의 ```Open Arcylic Hosts``` 메뉴를 클릭하여 실행한다.
+![Open Arcylic Hosts](assets/20230615_200553.png)
+
+열린 호스트 파일 최 하단으로 스크롤하여 이동한 후 아래 그림과 같이 개발용으로 사용할 도매인 호스트를 지정한다.
+```
+127.0.0.1 localhost *.*.wd
+```
+![호스트 설정](assets/20230615_200636.png)
+
+이렇게 입력한 후 ```File``` > ```Save``` 메뉴를 클릭하여 저장하면 서비스가 재실행된다. 만일 서비스가 재실행되지 않으면 ```Restart Arcylic Service```를 클릭하여 서비스를 재실행한다.
+![서비스 재실행](assets/20230615_202344.png)
 
 ### 네트워크 어답터 설정
+마지막으로 인터넷에 연결된 네트워크 어답터의 DNS 서버 주소를 ```127.0.0.1``` 을 설정하고 저장한다.
+아래의 경우는 Windows 11의 설정화면이다. Windows 8의 경우 네트워크 어답터 설정의 ```속성```을 클릭하여 ```인터넷 프로토콜(IP4)```의 속성 중 DNS 서버 주소를 ```다음 DNS 서버 주소 사용``` 을 체크하고 ```127.0.0.1```을 설정한다.
+![DNS 서버 주소 설정](assets/20230615_200820.png)
