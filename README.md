@@ -568,4 +568,16 @@ sudo cp -v $(brew --prefix dnsmasq)/homebrew.mxcl.dnsmasq.plist /Library/LaunchD
 sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
 ```
 
-# Arcylic DNS Proxy
+## Arcylic DNS Proxy
+윈도우즈에서 개발용 동적 도매인을 위해 이 프로그램이 필요하다. 설치 과정은 아래와 같다.
+
+1. 프로그램 다운로드
+2. 도매인 설정
+3. 네트워크 어답터 설정
+
+### 프로그램 다운로드
+공식 사이트 [Acrylic DNS Proxy](https://mayakron.altervista.org/support/acrylic/Home.htm)에 접속하여 셋업 프로그램을 다운로드하여 설치한다.
+
+### 도매인 설정
+
+### 네트워크 어답터 설정
