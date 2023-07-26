@@ -1,8 +1,8 @@
 version: "3.8"
-volumes:
-    sql_data:
-    webroot:
-    solr_cores:
+# volumes:
+#     sql_data:
+#     webroot:
+#     solr_cores:
 
 services:
     db:

@@ -1,7 +1,8 @@
 version: "3.8"
-volumes:
-    sql_data:
-    webroot:
+# volumes:
+#     sql_data:
+#     webroot:
+
 
 services:
     db:
