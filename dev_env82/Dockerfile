@@ -3,7 +3,7 @@ FROM ubuntu:latest
 RUN apt update
 RUN apt upgrade -y
 
-RUN apt install -y wget vim debconf-utils
+RUN apt install -y wget vim debconf-utils curl python3
 
 RUN apt install -y mysql-client apache2
 RUN a2enmod rewrite vhost_alias ssl
@@ -22,7 +22,8 @@ RUN apt-get install -y php8.2-bcmath php8.2-bz2 php8.2-cgi php8.2-cli php8.2-com
 	php8.2-ldap php8.2-mbstring php8.2-mysql php8.2-odbc php8.2-opcache php8.2-phpdbg php8.2-pspell \
 	php8.2-readline php8.2-snmp php8.2-soap php8.2-tidy php8.2-xml php8.2-xsl php8.2-zip php8.2-xdebug \
     libapache2-mod-php8.2
-	
+RUN curl https://deb.nodesource.com/setup_lts.x | bash -; \
+    apt install -y nodejs
 RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8.2/cgi/php.ini; \
 	sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.2/cgi/php.ini; \
     sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.2/cgi/php.ini; \
@@ -56,7 +57,7 @@ RUN echo "\nif [ -e \"/etc/apache2/sites-enabled/sites.conf\" ]\nthen\n\tcd /Dev
 
 VOLUME [ "/DevHome" ]
 
-EXPOSE 80 443
+EXPOSE 80 443 5173 8080
 
 ENTRYPOINT [ "docker_entrypoint.sh" ]
 
