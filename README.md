@@ -8,6 +8,7 @@
 
 * PHP 버전 5.6, 7.x, 8.x 등 3개 버전을 모두 이용한다.
 * 단순한 사이트에서부터 도매인 기반 특수 사이트 개발을 해야 한다.
+* Laravel 기반 프로젝트 수행 시 문제가 없어야 한다.
 * Apache Solr를 이용한 검색 기능을 하는 사이트 유지보수를 해야한다.
 
 필요한 도커 컨테이너
@@ -111,6 +112,12 @@ RUN apt-get install -y php8.2-bcmath php8.2-bz2 php8.2-cgi php8.2-cli php8.2-com
 	php8.2-ldap php8.2-mbstring php8.2-mysql php8.2-odbc php8.2-opcache php8.2-phpdbg php8.2-pspell \
 	php8.2-readline php8.2-snmp php8.2-soap php8.2-tidy php8.2-xml php8.2-xsl php8.2-zip php8.2-xdebug \
     libapache2-mod-php8.2
+```
+
+PHP 7.4, 8.2 버전의 경우 Laravel 기반 프로젝트 수행 시 NodeJs를 소스코드를 받아 LTS 버전을 빌드하여 적용한다.
+```
+RUN curl https://deb.nodesource.com/setup_lts.x | bash -; \
+    apt install -y nodejs
 ```
 
 각 버전 경로의 php.ini를 변경하여 최대 업로드 파일 사이즈, 포스트 최대 사이즈 등을 250MB로 설정한다.
@@ -597,3 +604,16 @@ sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
 마지막으로 인터넷에 연결된 네트워크 어답터의 DNS 서버 주소를 ```127.0.0.1``` 을 설정하고 저장한다.
 아래의 경우는 Windows 11의 설정화면이다. Windows 8의 경우 네트워크 어답터 설정의 ```속성```을 클릭하여 ```인터넷 프로토콜(IP4)```의 속성 중 DNS 서버 주소를 ```다음 DNS 서버 주소 사용``` 을 체크하고 ```127.0.0.1```을 설정한다.
 ![DNS 서버 주소 설정](assets/20230615_200820.png)
+
+Laravel Vite를 위한 환경 설정
+--------------------------
+
+Docker 개발환경으로 변경하면서 Vite의 HMR 기능이 오류가 발생해서 매우 불편했다. 이 문제는 WSL2의 문제만이 아니라 Docker 개발환경에서도 문제가 되었다. Laravel 공식 문서 [Asset Bundling](https://laravel.com/docs/10.x/vite) 문서의 [Running The Development Server In Sail On WSL2
+](https://laravel.com/docs/10.x/vite#configuring-hmr-in-sail-on-wsl2) 부분의 내용을 적용해도 해결되지 않는다. 최근에야 이 문제를 해결할 수 있었다. 문제의 원인은 요청을 수신하는 IP 주소가 지정되지 않아 생기(?)는 문제로 보인다. 이 문제를 해결하기 위해 아래와 같이 ```vite.config.js``` 파일에 아래의 내용을 추가했다.
+```
+server: {
+    https: false,   // HTTPS 비활성화
+    host: true,     // 요청 수신 IP 설정
+    hmr: {host: 'localhost', protocol: 'ws'},   // HMR 엔더포인트 및 프로토콜 설정
+},
+```
