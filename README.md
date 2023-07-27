@@ -588,6 +588,7 @@ sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
 ### 도매인 설정
 이재 로컬에서 개발용으로 사용할 도매인 설정을 진행한다. 설정을 하기 위해 ```Arcylic DNS Proxy UI``` 를 실행한다.
 실행 한 후 ```File``` 메뉴의 ```Open Arcylic Hosts``` 메뉴를 클릭하여 실행한다.
+
 ![Open Arcylic Hosts](assets/20230615_200553.png)
 
 열린 호스트 파일 최 하단으로 스크롤하여 이동한 후 아래 그림과 같이 개발용으로 사용할 도매인 호스트를 지정한다.
