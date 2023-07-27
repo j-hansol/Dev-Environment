@@ -114,7 +114,7 @@ RUN apt-get install -y php8.2-bcmath php8.2-bz2 php8.2-cgi php8.2-cli php8.2-com
     libapache2-mod-php8.2
 ```
 
-PHP 7.4, 8.2 버전의 경우 Laravel 기반 프로젝트 수행 시 NodeJs를 소스코드를 받아 LTS 버전을 빌드하여 적용한다.
+PHP 7.4, 8.2 버전의 경우 Laravel 기반 프로젝트 수행 시 NodeJs를 소스코드를 받아 LTS 버전을 적용한다.
 ```
 RUN curl https://deb.nodesource.com/setup_lts.x | bash -; \
     apt install -y nodejs
