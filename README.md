@@ -617,3 +617,29 @@ server: {
     hmr: {host: 'localhost', protocol: 'ws'},   // HMR 엔더포인트 및 프로토콜 설정
 },
 ```
+
+```host``` 항목을 설정하지 않으면 ```npm run dev``` 실행 시 아래와 같이 네트워크 부분이 표시되지 않는다.
+```
+  VITE v4.0.3  ready in 6254 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h to show help
+
+  LARAVEL v9.45.1  plugin v0.7.3
+
+  ➜  APP_URL: https://public............wd
+```
+
+위와 같이 설정하면 아래와 같이 네트워크 부분이 설정되어 표시되고, 오류가 발생하지 않는다.
+```
+  VITE v4.0.3  ready in 1183 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://172.26.0.3:5173/
+  ➜  press h to show help
+
+  LARAVEL v9.45.1  plugin v0.7.3
+
+  ➜  APP_URL: https://public..........wd
+```
