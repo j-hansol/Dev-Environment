@@ -621,6 +621,15 @@ server: {
     hmr: {host: 'localhost', protocol: 'ws'},   // HMR 엔더포인트 및 프로토콜 설정
 },
 ```
+간혹 이렇게 해도 오류가 나는 경우가 있다. (마지막 점검중에 발생) 아래와 같이 포트번호를 추가했다.
+```
+server: {
+    https: false,   // HTTPS 비활성화
+    host: true,     // 요청 수신 IP 설정
+    port: 5173,
+    hmr: {host: 'localhost', protocol: 'ws', port: 5173},   // HMR 엔더포인트 및 프로토콜 설정
+},
+```
 
 ```host``` 항목을 설정하지 않으면 ```npm run dev``` 실행 시 아래와 같이 네트워크 부분이 표시되지 않는다.
 ```
