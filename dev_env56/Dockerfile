@@ -3,7 +3,7 @@ FROM ubuntu:latest
 RUN apt update; \
     apt upgrade -y
     
-RUN apt install -y wget vim debconf-utils mysql-client apache2; \
+RUN apt install -y wget vim debconf-utils mysql-client apache2 curl; \
     a2enmod rewrite vhost_alias ssl
 
 RUN echo tzdata tzdata/Areas select Asia | debconf-set-selections; \
@@ -25,7 +25,9 @@ RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/5.
     sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/5.6/cgi/php.ini; \
     sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/5.6/apache2/php.ini; \
 	sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/5.6/apache2/php.ini; \
-    sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/5.6/apache2/php.ini
+    sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/5.6/apache2/php.ini; \
+    sed -i 's/memory_limit = 128M/memory_limit = 1024M/g' /etc/php/5.6/apache2/php.ini
+
 
 RUN echo "xdebug.remote_enable=1" >> /etc/php/5.6/mods-available/xdebug.ini; \
     echo "xdebug.remote_host=host.docker.internal" >> /etc/php/5.6/mods-available/xdebug.ini; \
