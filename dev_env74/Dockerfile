@@ -9,11 +9,11 @@ RUN apt install -y mysql-client apache2
 RUN a2enmod rewrite vhost_alias ssl
 RUN service apache2 restart
 
-RUN echo tzdata tzdata/Areas select Asia | debconf-set-selections
-RUN echo tzdata tzdata/Zones/Asia select Seoul | debconf-set-selections
-RUN apt install -y software-properties-common
-RUN echo "Asia/Seoul" > /etc/timezone
-RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+RUN echo tzdata tzdata/Areas select Asia | debconf-set-selections; \
+    echo tzdata tzdata/Zones/Asia select Seoul | debconf-set-selections; \
+    apt install -y software-properties-common git-all; \
+    echo "Asia/Seoul" > /etc/timezone; \
+    ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 RUN add-apt-repository -y ppa:ondrej/php
 RUN apt update
@@ -24,9 +24,11 @@ RUN apt-get install -y php7.4 php7.4-cli php7.4-curl php7.4-gd php7.4-json \
 RUN curl https://deb.nodesource.com/setup_lts.x | bash -; \
     apt install -y nodejs
 RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/7.4/apache2/php.ini; \
+    sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/cgi/php.ini; \
 	sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/7.4/apache2/php.ini; \
     sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.4/apache2/php.ini \
     sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/7.4/apache2/php.ini; \
+    sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/apache2/php.ini; \
 	sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/7.4/apache2/php.ini; \
     sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.4/apache2/php.ini
 
@@ -47,9 +49,9 @@ ADD myadmin /var/www/html/myadmin
 RUN chmod 0755 /usr/bin/svhost
 
 COPY docker_entrypoint.sh /usr/bin/docker_entrypoint.sh
-RUN chmod 0755 /usr/bin/docker_entrypoint.sh
-RUN mkdir /DevHome
-RUN rm -r /var/lib/apt/lists /var/cache/apt/archives
+RUN chmod 0755 /usr/bin/docker_entrypoint.sh; \
+    mkdir /DevHome; \
+    rm -r /var/lib/apt/lists /var/cache/apt/archives
 ENV LC_ALL=C.UTF-8
 
 RUN echo "\nif [ -e \"/etc/apache2/sites-enabled/sites.conf\" ]\nthen\n\tcd /DevHome/sites\nelif [ -e \"/etc/apache2/sites-enabled/domains.conf\" ]\nthen\n\tcd /DevHome/domains\nfi" >> /root/.bashrc

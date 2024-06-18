@@ -1,0 +1,56 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    index index.php index.html index.htm index.nginx-debian.html;
+
+    server_name localhost admin.sites.wd;
+
+    root /var/www/html;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string =404;
+    }
+
+    location ~ \.php$ {
+        fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+        try_files $fastcgi_script_name =404;
+        set $path_info $fastcgi_path_info;
+        fastcgi_param PATH_INFO $path_info;
+        fastcgi_index index.php;
+        include fastcgi.conf;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+    }
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    
+    ssl_certificate /etc/ssl/private/dev.crt;
+    ssl_certificate_key /etc/ssl/private/dev.key;
+
+    index index.php index.html index.htm index.nginx-debian.html;
+
+    server_name ~^(?<host_name>[\w\-]+)\.(?<organization>[\w\-]+)\.wd$;
+
+    set $site /DevHome/$organization/$host_name;
+    root $site;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string =404;
+    }
+
+    location ~ \.php$ {
+        fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+        try_files $fastcgi_script_name =404;
+        set $path_info $fastcgi_path_info;
+        fastcgi_param PATH_INFO $path_info;
+        fastcgi_index index.php;
+        include fastcgi.conf;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+    }
+}

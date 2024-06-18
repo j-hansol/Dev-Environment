@@ -50,7 +50,7 @@ RUN set -eux; \
 	rm -rf "$GNUPGHOME"
 
 ENV MYSQL_MAJOR 8.0
-ENV MYSQL_VERSION 8.0.29-1debian10
+ENV MYSQL_VERSION 8.0.35-1debian11
 
 RUN echo 'deb [ signed-by=/etc/apt/keyrings/mysql.gpg ] http://repo.mysql.com/apt/debian/ buster mysql-8.0' > /etc/apt/sources.list.d/mysql.list
 
