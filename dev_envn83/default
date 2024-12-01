@@ -1,0 +1,50 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    index index.php index.html index.htm index.nginx-debian.html;
+
+    server_name localhost admin.sites.wd;
+
+    root /var/www/html;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        include fastcgi.conf;
+        fastcgi_hide_header X-Powered-By;
+    }
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    
+    ssl_certificate /etc/ssl/private/dev.crt;
+    ssl_certificate_key /etc/ssl/private/dev.key;
+
+    index index.php index.html index.htm index.nginx-debian.html;
+
+    server_name ~^(?<host_name>[\w\-]+)\.(?<organization>[\w\-]+)\.wd$;
+
+    set $site /DevHome/sites/$organization/$host_name;
+    root $site;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        include fastcgi.conf;
+        fastcgi_hide_header X-Powered-By;
+    }
+}
