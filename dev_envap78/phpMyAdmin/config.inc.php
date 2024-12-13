@@ -25,10 +25,9 @@ $i = 0;
  */
 $i++;
 /* Authentication type */
-$cfg['Servers'][$i]['auth_type'] = 'config';
+$cfg['Servers'][$i]['auth_type'] = 'cookie';
 /* Server parameters */
-$cfg['Servers'][$i]['host'] = 'localhost';
-$cfg['Servers'][$i]['host'] = 'root';
+$cfg['Servers'][$i]['host'] = 'host.docker.internal';
 $cfg['Servers'][$i]['compress'] = false;
 $cfg['Servers'][$i]['AllowNoPassword'] = false;
 

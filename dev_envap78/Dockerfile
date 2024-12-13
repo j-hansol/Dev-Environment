@@ -12,8 +12,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime; \
 
 RUN apt update; \
     apt upgrade -y; \
-    apt install -y vim gnupg curl ca-certificates zip unzip git libpng-dev python3 dnsutils librsvg2-bin fswatch ffmpeg nano apache2 mysql-client; \
+    apt install -y gnupg curl ca-certificates zip unzip git libpng-dev python3 dnsutils librsvg2-bin fswatch ffmpeg nano apache2; \
     apt install -y software-properties-common; \ 
+    apt install -y sudo vim mysql-client; \
     echo tzdata tzdata/Areas select Asia | debconf-set-selections; \
     echo tzdata tzdata/Zones/Asia select Seoul | debconf-set-selections; \
     echo "Asia/Seoul" > /etc/timezone; \
@@ -69,6 +70,9 @@ COPY svhost.sh /usr/bin/svhost
 COPY sphp.sh /usr/bin/sphp
 COPY ssl_key/* /etc/ssl/private
 ADD phpMyAdmin /var/www/html/myadmin
+RUN mkdir -p /var/www/html/myadmin/tmp; \
+    chown www-data:www-data /var/www/html/myadmin/tmp; \
+    echo "ubuntu ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/ubuntu
 COPY docker_entrypoint.sh /usr/bin/docker_entrypoint.sh
 COPY confs/* /etc/apache2/sites-available
 

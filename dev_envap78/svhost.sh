@@ -25,6 +25,11 @@ function domain_link()
     fi
 }
 
+function apache2_restart() {
+    service apache2 stop
+    service apache2 start
+}
+
 # 개별 사이트 환경설정 활성화
 function sites_link()
 {
@@ -42,7 +47,7 @@ function sites_link()
 case $1 in
     init)
         if [ $(sites_link) -eq 1 ]; then
-            service apache2 restart
+            apache2_restart
         else
             echo "Initialization failed"
         fi
@@ -50,7 +55,7 @@ case $1 in
     sites)
         unlink "domains.conf"
         if [ $(sites_link) -eq 1 ]; then
-            service apache2 restart
+            apache2_restart
         else
             echo "Cannot switch mode."
         fi
@@ -60,7 +65,7 @@ case $1 in
             unlink "sites.conf"
             ret=$(domain_link $2)
             if [ 1 -eq $ret ]; then
-                service apache2 restart
+                apache2_restart
             else
                 echo "Cannot switch mode."
             fi
@@ -75,7 +80,7 @@ case $1 in
         service apache2 stop
         ;;
     *)
-        echo "Usage : svhost <sites|domains> [document_root]"
+        echo "Usage : svhost <sites|domains|start|stop> [document_root]"
         ;;
 esac
 

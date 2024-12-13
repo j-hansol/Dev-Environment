@@ -12,6 +12,11 @@ get_current() {
     fi
 }
 
+apache2_restart() {
+    service apache2 stop
+    service apache2 start
+}
+
 case $1 in
     7.4)
         target="7.4"
@@ -36,19 +41,19 @@ fi
 if [ "$target" == "7.4" ]; then
     a2dismod "php$current"
     a2enmod php7.4
-    service apache2 restart
+    apache2_restart
     update-alternatives --set php /usr/bin/php7.4
     echo "Done..."
 elif [ "$target" == "8.2" ]; then
     a2dismod "php$current"
     a2enmod php8.2
-    service apache2 restart
+    apache2_restart
     update-alternatives --set php /usr/bin/php8.2
     echo "Done..."
 elif [ "$target" == "8.4" ]; then
     a2dismod "php$current"
     a2enmod php8.4
-    service apache2 restart
+    apache2_restart
     update-alternatives --set php /usr/bin/php8.4
     echo "Done..."
 fi
