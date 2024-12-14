@@ -1,5 +1,5 @@
 #!/bin/bash
 
-/usr/bin/sphp 8.2
-/usr/bin/svhost init
+/usr/bin/sphp "$PHP"
+/usr/bin/svhost "$CONF" "$DOCUMENT_ROOT"
 exec "$@"

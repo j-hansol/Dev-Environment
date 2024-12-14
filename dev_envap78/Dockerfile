@@ -63,7 +63,10 @@ RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/7.
     echo "xdebug.client_port = 9000" >> /etc/php/8.4/mods-available/xdebug.ini
 
 RUN rm -f /etc/apache2/sites-available/* /etc/apache2/sites-enabled/*; \
-    rm -f /etc/apache2/mods-enabled/php*
+    rm -f /etc/apache2/mods-enabled/php*; \
+    systemctl stop apache2; \
+    systemctl disable apache2
+
     
 COPY index.php /var/www/html/index.php
 COPY svhost.sh /usr/bin/svhost
@@ -86,4 +89,4 @@ EXPOSE 80 443 5173 8080
 
 ENTRYPOINT [ "docker_entrypoint.sh" ]
 
-CMD ["tail","-f","/var/log/apache2/error.log"]
+CMD ["apache2ctl", "-D", "FOREGROUND"]
