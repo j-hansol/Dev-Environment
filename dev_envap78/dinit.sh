@@ -8,7 +8,7 @@ DOCUMENT_ROOT=""
 EXIT=0
 while [ $EXIT -eq 0 ]
 do
-    echo " 1. Init Directory (webroot, webroot/sites, webroot/domains) "
+    echo " 1. Init Directory (webroot, webroot/sites, webroot/domains, lib) "
     echo ""
     echo " Domains Evironment "
     echo " 2. PHP 7.4 "

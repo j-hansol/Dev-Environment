@@ -51,6 +51,13 @@ RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/7.
     echo "xdebug.mode = develop,debug" >> /etc/php/7.4/mods-available/xdebug.ini; \
     echo "xdebug.client_host=host.docker.internal" >> /etc/php/7.4/mods-available/xdebug.ini; \
     echo "xdebug.client_port = 9000" >> /etc/php/7.4/mods-available/xdebug.ini; \
+    sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8.1/apache2/php.ini; \
+    sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/apache2/php.ini; \
+    sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.1/apache2/php.ini; \
+    sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.1/apache2/php.ini; \
+    echo "xdebug.mode = develop,debug" >> /etc/php/8.1/mods-available/xdebug.ini; \
+    echo "xdebug.client_host=host.docker.internal" >> /etc/php/8.1/mods-available/xdebug.ini; \
+    echo "xdebug.client_port = 9000" >> /etc/php/8.1/mods-available/xdebug.ini; \
     sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8.2/apache2/php.ini; \
     sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.2/apache2/php.ini; \
     sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.2/apache2/php.ini; \
