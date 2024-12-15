@@ -2,6 +2,7 @@
 
 PHP=""
 CONF=""
+CUSTOM_INI=""
 DOCUMENT_ROOT=""
 
 EXIT=0
@@ -67,6 +68,11 @@ do
 done
 
 if [ $EXIT -eq 1 ]; then
+    read -p "PHP Custom extension ini file name : " INI
+    if [ -f "./custom_config/${INI}" ]; then
+        CUSTOM_INI=$INI
+    fi
+
     read -p "Type Document root directory name (Domains only) : " DIR
     DOCUMENT_ROOT=$DIR
     
@@ -96,6 +102,11 @@ if [ $EXIT -eq 1 ]; then
     echo "    environment:" >> docker-compose.yml
     echo "      PHP: ${PHP}" >> docker-compose.yml
     echo "      CONF: ${CONF}" >> docker-compose.yml
+    
+    if [ -n "${CUSTOM_INI}" ]; then
+        echo "      CUSTOM_INI: ${CUSTOM_INI}" >> docker-compose.yml
+    fi
+    
     echo "      DOCUMENT_ROOT: ${DOCUMENT_ROOT}" >> docker-compose.yml
     echo "    ports:" >> docker-compose.yml
     echo "      - 80:80" >> docker-compose.yml
