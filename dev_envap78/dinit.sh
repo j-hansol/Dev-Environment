@@ -104,7 +104,6 @@ if [ $EXIT -eq 1 ]; then
     echo "    command: --max_allowed_packet=536870912" >> docker-compose.yml
     echo "    environment:" >> docker-compose.yml
     echo "      MARIADB_ROOT_PASSWORD: mysql" >> docker-compose.yml
-    echo "      MARIADB_ROOT_HOST: \"%\"" >> docker-compose.yml
     echo "    ports:" >> docker-compose.yml
     echo "      - 3306:3306" >> docker-compose.yml
     echo "    volumes:" >> docker-compose.yml
