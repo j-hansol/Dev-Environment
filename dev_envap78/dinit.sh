@@ -12,14 +12,16 @@ do
     echo ""
     echo " Domains Evironment "
     echo " 2. PHP 7.4 "
-    echo " 3. PHP 8.2 "
-    echo " 4. PHP 8.4 "
+    echo " 3. PHP 8.1 "
+    echo " 4. PHP 8.2 "
+    echo " 5. PHP 8.4 "
     echo ""
     echo " Sites Environment "
-    echo " 5. PHP 7.4 "
-    echo " 6. PHP 8.2 "
-    echo " 7. PHP 8.4 "
-    echo " 8. Exit "
+    echo " 6. PHP 7.4 "
+    echo " 7. PHP 8.1 "
+    echo " 8. PHP 8.2 "
+    echo " 9. PHP 8.4 "
+    echo " 0. Exit "
     
     read -p "Select Number : " NO
     case "$NO" in
@@ -27,6 +29,7 @@ do
             mkdir webroot 2> /dev/null
             mkdir -p webroot/sites 2> /dev/null
             mkdir -p webroot/domains 2> /dev/null
+            mkdir -p lib 2> /dev/null
             ;;
         2)
             PHP="7.4"
@@ -34,31 +37,41 @@ do
             EXIT=1
             ;;
         3)
-            PHP="8.2"
+            PHP="8.1"
             CONF="domains"
             EXIT=1
             ;;
         4)
-            PHP="8.4"
+            PHP="8.2"
             CONF="domains"
             EXIT=1
             ;;
         5)
+            PHP="8.4"
+            CONF="domains"
+            EXIT=1
+            ;;
+        6)
             PHP="7.4"
             CONF="sites"
             EXIT=1
             ;;
-        6)
-            PHP="8.2"
-            CONF="sites"
-            EXIT=1
-            ;;
         7)
-            PHP="8.4"
+            PHP="8.1"
             CONF="sites"
             EXIT=1
             ;;
         8)
+            PHP="8.2"
+            CONF="sites"
+            EXIT=1
+            ;;
+        9)
+            PHP="8.4"
+            CONF="sites"
+            EXIT=1
+            ;;
+        0)
             exit 0
             ;;
         *)
@@ -69,7 +82,7 @@ done
 
 if [ $EXIT -eq 1 ]; then
     read -p "PHP Custom extension ini file name : " INI
-    if [ -f "./custom_config/${INI}" ]; then
+    if [ -f "./lib/${INI}" ]; then
         CUSTOM_INI=$INI
     fi
 
@@ -103,7 +116,7 @@ if [ $EXIT -eq 1 ]; then
     echo "      PHP: ${PHP}" >> docker-compose.yml
     echo "      CONF: ${CONF}" >> docker-compose.yml
     
-    if [ -n "${CUSTOM_INI}" ]; then
+    if [ -n "./lib/${CUSTOM_INI}" ]; then
         echo "      CUSTOM_INI: ${CUSTOM_INI}" >> docker-compose.yml
     fi
     
@@ -115,5 +128,10 @@ if [ $EXIT -eq 1 ]; then
     echo "      - 8080:8080" >> docker-compose.yml
     echo "    volumes:" >> docker-compose.yml
     echo "      - ./webroot:/DevHome" >> docker-compose.yml
-    echo "Init docker-compose.yml file"    
+
+    if [ -n "./lib/${CUSTOM_INI}" ]; then
+        echo "      - ./lib:/usr/lib/php/custom" >> docker-compose.yml
+    fi
+
+    echo "Init docker-compose.yml file"
 fi
