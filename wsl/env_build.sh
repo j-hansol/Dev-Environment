@@ -55,6 +55,7 @@ sudo apt-get install -y --fix-missing php7.4-amqp php7.4-apcu php7.4-apcu-bc php
 # oci8 소스 다운르도
 echo "Oci8 확장 소스 다운로드"
 sudo apt-get -y install glibc-source php-pear build-essential libaio1t64 1> /dev/null
+sudo ln -s /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/libaio.so.1
 mkdir -p $HOMEDIR/oci8 1> /dev/null
 cd $HOMEDIR/oci8 1> /dev/null
 pecl download oci8-2.2.0 1> /dev/null
