@@ -12,7 +12,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime; \
 
 RUN apt update; \
     apt upgrade -y; \
-    apt install -y gnupg curl ca-certificates zip unzip git libpng-dev python3 dnsutils librsvg2-bin fswatch apache2; \
+    apt install -y gnupg curl ca-certificates zip unzip git libpng-dev python3 dnsutils librsvg2-bin fswatch apache2 wget; \
     apt install -y software-properties-common; \ 
     apt install -y sudo vim mysql-client; \
     echo tzdata tzdata/Areas select Asia | debconf-set-selections; \
