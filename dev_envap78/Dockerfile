@@ -46,7 +46,7 @@ RUN apt install -y --fix-missing php7.4-amqp php7.4-apcu php7.4-apcu-bc php7.4-a
     php7.4-uuid php7.4-xml php7.4-xmlrpc php7.4-xml php7.4-xmlrpc php7.4-yaml php7.4-intl php7.4-mbstring php7.4-zip php7.4-redis php7.4-imagick php7.4-xdebug libapache2-mod-php7.4
 
 RUN mkdir -p /root/oci8; \
-    cd $HOMEDIR/oci8; \
+    cd /root/oci8; \
     pecl download oci8-2.2.0; \
     tar xvzf oci8-2.2.0.tgz; \
     rm oci8-2.2.0.tgz; \
