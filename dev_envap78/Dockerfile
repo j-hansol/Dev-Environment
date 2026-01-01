@@ -58,7 +58,7 @@ RUN mkdir -p /root/oci8; \
     rm oci8-3.3.0.tgz; \
     pecl download oci8-3.4.0; \
     tar xvzf oci8-3.4.0.tgz; \
-    rm oci8-3.4.0.tgz; \
+    rm oci8-3.4.0.tgz
 
 RUN cd /root/oci8/oci8-2.2.0; \
     phpize7.4; \
