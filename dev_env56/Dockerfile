@@ -38,7 +38,6 @@ RUN echo "xdebug.remote_enable=1" >> /etc/php/5.6/mods-available/xdebug.ini; \
 RUN rm -f /etc/apache2/sites-available/* /etc/apache2/sites-enabled/*
 COPY confs/* /etc/apache2/sites-available
 COPY index.php /var/www/html/index.php
-COPY svhost.sh /usr/bin/svhost
 COPY ssl_key/* /etc/ssl/private
 ADD myadmin /var/www/html/myadmin
 RUN chmod 0755 /usr/bin/svhost
