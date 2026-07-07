@@ -150,7 +150,7 @@ sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/7
 sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/fpm/php.ini; \
 sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/7.4/fpm/php.ini; \
 sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.4/fpm/php.ini; \
-sudo echo "xdebug.mode = develop,debug" | sudo tee /etc/php/7.4/mods-available/xdebug.ini; \
+sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/7.4/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_host=127.0.0.1" | sudo tee -a /etc/php/7.4/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/7.4/mods-available/xdebug.ini
 
@@ -160,7 +160,7 @@ sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8
 sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/fpm/php.ini; \
 sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.1/fpm/php.ini; \
 sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.1/fpm/php.ini; \
-sudo echo "xdebug.mode = develop,debug" | sudo tee /etc/php/8.1/mods-available/xdebug.ini; \
+sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_host=127.0.0.1" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini
 
@@ -170,7 +170,7 @@ sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8
 sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.2/fpm/php.ini; \
 sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.2/fpm/php.ini; \
 sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.2/fpm/php.ini; \
-sudo echo "xdebug.mode = develop,debug" | sudo tee /etc/php/8.2/mods-available/xdebug.ini; \
+sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/8.2/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_host=127.0.0.1" | sudo tee -a /etc/php/8.2/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/8.2/mods-available/xdebug.ini
 
@@ -180,7 +180,7 @@ sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8
 sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.4/fpm/php.ini; \
 sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.4/fpm/php.ini; \
 sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.4/fpm/php.ini; \
-sudo echo "xdebug.mode = develop,debug" | sudo tee /etc/php/8.4/mods-available/xdebug.ini; \
+sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/8.4/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_host=127.0.0.1" | sudo tee -a /etc/php/8.4/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/8.4/mods-available/xdebug.ini
 
@@ -293,7 +293,6 @@ sudo tee /var/www/html/index.php > /dev/null <<DASHBOARD
                         'http_url' => "http://www.\$entry.\$domain_suffix",
                         'sitename' => \$entry
                     );
-                    break;
                 }
             }
         }

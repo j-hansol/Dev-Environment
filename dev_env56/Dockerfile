@@ -3,7 +3,7 @@ FROM ubuntu:latest
 RUN apt update; \
     apt upgrade -y
     
-RUN apt install -y wget vim debconf-utils mysql-client apache2 curl; \
+RUN apt install -y wget vim debconf-utils mysql-client apache2 curl software-properties-common; \
     a2enmod rewrite vhost_alias ssl
 
 RUN echo tzdata tzdata/Areas select Asia | debconf-set-selections; \
@@ -12,8 +12,8 @@ RUN echo tzdata tzdata/Areas select Asia | debconf-set-selections; \
     echo "Asia/Seoul" > /etc/timezone; \
     ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
-RUN add-apt-repository -y ppa:ondrej/php; \
-    apt update; \
+RUN add-apt-repository -y ppa:ondrej/php
+RUN apt update; \
     apt -y install php5.6 php5.6-pdo php5.6-gd php5.6-mbstring php5.6-cli \
     php5.6-mysql php5.6-dba php5.6-pdo php5.6-intl php5.6-curl php5.6-simplexml \
     php5.6-xmlrpc php5.6-zip php5.6-dev php5.6-xdebug
@@ -38,6 +38,7 @@ RUN echo "xdebug.remote_enable=1" >> /etc/php/5.6/mods-available/xdebug.ini; \
 RUN rm -f /etc/apache2/sites-available/* /etc/apache2/sites-enabled/*
 COPY confs/* /etc/apache2/sites-available
 COPY index.php /var/www/html/index.php
+COPY svhost.sh /usr/bin/svhost
 COPY ssl_key/* /etc/ssl/private
 ADD myadmin /var/www/html/myadmin
 RUN chmod 0755 /usr/bin/svhost
