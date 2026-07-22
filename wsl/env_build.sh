@@ -666,5 +666,6 @@ SITE_CONFIG
 sudo ln -s /etc/nginx/sites-available/domains /etc/nginx/sites-enabled/domains
 
 # Nginx 재실행
+sudo service nginx restart
 sudo sphp 8.4
-sudo svhost domains
+source ~/.bash_profile
