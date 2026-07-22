@@ -152,6 +152,7 @@ sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/7.4/fpm/php.i
 sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.4/fpm/php.ini; \
 sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/7.4/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_host=127.0.0.1" | sudo tee -a /etc/php/7.4/mods-available/xdebug.ini; \
+sudo echo "xdebug.discover_client_host=1" | sudo tee -a /etc/php/7.4/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/7.4/mods-available/xdebug.ini
 
 # PHP 8.1 환경 설정 수정
@@ -161,7 +162,7 @@ sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/fpm/php.i
 sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.1/fpm/php.ini; \
 sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.1/fpm/php.ini; \
 sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini; \
-sudo echo "xdebug.client_host=127.0.0.1" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini; \
+sudo echo "xdebug.client_host=xdebug://gateway" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini
 
 # PHP 8.2 환경 설정 수정
@@ -171,7 +172,7 @@ sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.2/fpm/php.i
 sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.2/fpm/php.ini; \
 sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.2/fpm/php.ini; \
 sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/8.2/mods-available/xdebug.ini; \
-sudo echo "xdebug.client_host=127.0.0.1" | sudo tee -a /etc/php/8.2/mods-available/xdebug.ini; \
+sudo echo "xdebug.client_host=xdebug://gateway" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/8.2/mods-available/xdebug.ini
 
 # PHP 8.4 환경 설정 수정
@@ -181,7 +182,7 @@ sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.4/fpm/php.i
 sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.4/fpm/php.ini; \
 sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.4/fpm/php.ini; \
 sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/8.4/mods-available/xdebug.ini; \
-sudo echo "xdebug.client_host=127.0.0.1" | sudo tee -a /etc/php/8.4/mods-available/xdebug.ini; \
+sudo echo "xdebug.client_host=xdebug://gateway" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/8.4/mods-available/xdebug.ini
 
 #PHP FPM 재실행
@@ -281,7 +282,6 @@ sudo tee /var/www/html/index.php > /dev/null <<DASHBOARD
                             'http_url' => "http://\$docroot.\$entry.\$domain_suffix",
                             'sitename' => \$entry
                         );
-                        break;
                     }
                 }
             }
@@ -375,6 +375,7 @@ PHPIZE_BIN="/usr/bin/phpize\${VERSION}"
 PHAR_BIN="/usr/bin/phar\${VERSION}"
 PHAR_PHAR_BIN="/usr/bin/phar.phar\${VERSION}"
 PHP_FPM_SOCKET="/run/php/php\${VERSION}-fpm.sock"
+PHP_FPM_ALTERNATIVE="/etc/alternatives/php-fpm.sock"
 
 if [ ! -x "\$PHP_BIN" ]; then
     echo "\${PHP_BIN}을 찾을 수 없습니다."
@@ -414,8 +415,24 @@ fi
 if [ ! -S "\$PHP_FPM_SOCKET" ]; then
     echo "\${PHP_FPM_SOCKET}을 찾을 수 없습니다."
     exit
-else
-    sudo update-alternatives --set php-fpm.sock "\$PHP_FPM_SOCKET"
+fi
+
+if ! sudo update-alternatives --set php-fpm.sock "\$PHP_FPM_SOCKET"; then
+    echo "update-alternatives 설정에 실패했습니다."
+    echo "심볼릭 링크를 직접 생성합니다."
+
+    # 기존 심볼릭 링크 또는 파일 삭제
+    if [ -e "\$PHP_FPM_ALTERNATIVE" ] || [ -L "\$PHP_FPM_ALTERNATIVE" ]; then
+        sudo rm -f "\$PHP_FPM_ALTERNATIVE"
+    fi
+
+    # 새로운 심볼릭 링크 생성
+    if ! sudo ln -s "\$PHP_FPM_SOCKET" "\$PHP_FPM_ALTERNATIVE"; then
+        echo "심볼릭 링크 생성에 실패했습니다."
+        exit 1
+    fi
+
+    echo "\${PHP_FPM_ALTERNATIVE} -> \${PHP_FPM_SOCKET}"
 fi
 
 ls -al /etc/alternatives/php*
