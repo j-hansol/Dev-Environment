@@ -29,14 +29,32 @@ sudo apt-get update 1> /dev/null
 
 # Oracle 데이터베이스 연결용 라이브러리 설치
 echo "Oracle Instant Client 라이브러리 설치"
-sudo mkdir /usr/lib/oracle 1> /dev/null
-cd /usr/lib/oracle 1> /dev/null
-sudo wget https://download.oracle.com/otn_software/linux/instantclient/2119000/instantclient-basic-linux.x64-21.19.0.0.0dbru.zip 1> /dev/null
-sudo unzip -o instantclient-basic-linux.x64-21.19.0.0.0dbru.zip 1> /dev/null
-sudo rm -rf instantclient-basic-linux.x64-21.19.0.0.0dbru.zip 1> /dev/null
-sudo wget https://download.oracle.com/otn_software/linux/instantclient/2119000/instantclient-sdk-linux.x64-21.19.0.0.0dbru.zip 1> /dev/null
-sudo unzip -o instantclient-sdk-linux.x64-21.19.0.0.0dbru.zip 1> /dev/null
-sudo rm -rf instantclient-sdk-linux.x64-21.19.0.0.0dbru.zip 1> /dev/null
+# 네트워크(DNS) 일시 오류에 대비해 재시도하며 다운로드
+# 사용법: download_file <URL> <저장경로> [sudo]
+download_file() {
+  local url="$1" out="$2" prefix="$3" i
+  for i in 1 2 3 4 5; do
+    if $prefix wget -q -O "$out" "$url" && [ -s "$out" ]; then
+      return 0
+    fi
+    echo "  다운로드 실패($i/5), 5초 후 재시도: $url"
+    $prefix rm -f "$out"
+    sleep 5
+  done
+  echo "  다운로드 최종 실패: $url"
+  return 1
+}
+
+IC_BASE_URL=https://download.oracle.com/otn_software/linux/instantclient/2119000
+sudo mkdir -p /usr/lib/oracle
+cd /usr/lib/oracle || exit 1
+for pkg in basic sdk; do
+  zip=instantclient-$pkg-linux.x64-21.19.0.0.0dbru.zip
+  if download_file "$IC_BASE_URL/$zip" "$zip" sudo; then
+    sudo unzip -oq "$zip"
+  fi
+  sudo rm -f "$zip"
+done
 export ORACLE_HOME=/usr/lib/oracle
 export LD_LIBRARY_PATH=$ORACLE_HOME/instantclient_21_19
 export PATH=$PATH:$ORACLE_HOME
@@ -55,28 +73,49 @@ sudo apt-get install -y --fix-missing php7.4-amqp php7.4-apcu php7.4-apcu-bc php
 # oci8 소스 다운르도
 echo "Oci8 확장 소스 다운로드"
 sudo apt-get -y install glibc-source php-pear build-essential libaio1t64 1> /dev/null
-sudo ln -s /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/libaio.so.1
-mkdir -p $HOMEDIR/oci8 1> /dev/null
-cd $HOMEDIR/oci8 1> /dev/null
-pecl download oci8-2.2.0 1> /dev/null
-tar xvzf oci8-2.2.0.tgz 1> /dev/null
-rm oci8-2.2.0.tgz 1> /dev/null
-pecl download oci8-3.2.1 1> /dev/null
-tar xvzf oci8-3.2.1.tgz 1> /dev/null
-rm oci8-3.2.1.tgz 1> /dev/null
-pecl download oci8-3.4.1 1> /dev/null
-tar xvzf oci8-3.4.1.tgz 1> /dev/null
-rm oci8-3.4.1.tgz 1> /dev/null
+sudo ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/libaio.so.1
+rm -rf $HOMEDIR/oci8
+mkdir -p $HOMEDIR/oci8
+cd $HOMEDIR/oci8 || exit 1
+# pecl download 대신 PECL 서버에서 직접 받아 재시도 가능하게 함
+for ver in 2.2.0 3.2.1 3.4.1; do
+  if download_file "https://pecl.php.net/get/oci8-$ver.tgz" "oci8-$ver.tgz"; then
+    tar xzf "oci8-$ver.tgz"
+  fi
+  rm -f "oci8-$ver.tgz"
+done
+
+# Oci8 빌드 및 설치
+# 사용법: build_oci8 <PHP 버전> <oci8 소스 버전>
+build_oci8() {
+  local php_ver="$1" src="$HOMEDIR/oci8/oci8-$2" log="$HOMEDIR/oci8/oci8-$1-build.log"
+  if [ ! -f "$LD_LIBRARY_PATH/sdk/include/oci.h" ]; then
+    echo "  Instant Client SDK가 없어 PHP $php_ver용 Oci8 빌드를 건너뜁니다."
+    return 1
+  fi
+  if [ ! -d "$src" ]; then
+    echo "  $src 소스가 없어 PHP $php_ver용 Oci8 빌드를 건너뜁니다."
+    return 1
+  fi
+  cd "$src" || return 1
+  [ -f Makefile ] && make distclean > /dev/null 2>&1
+  phpize$php_ver > "$log" 2>&1 \
+    && ./configure --with-php-config=/usr/bin/php-config$php_ver \
+         --with-oci8=instantclient,$LD_LIBRARY_PATH >> "$log" 2>&1 \
+    && make >> "$log" 2>&1 \
+    && sudo make install >> "$log" 2>&1
+  if [ $? -ne 0 ]; then
+    echo "  PHP $php_ver용 Oci8 빌드 실패 (로그: $log)"
+    cp "$log" "$HOMEDIR/" 2>/dev/null
+    return 1
+  fi
+  echo "extension=oci8.so" | sudo tee /etc/php/$php_ver/mods-available/oci8.ini > /dev/null
+  sudo phpenmod -v $php_ver oci8 1> /dev/null
+}
 
 # PHP 7.4용 Oci8 빌드 및 설치
 echo "PHP 7.4 Oci8 확장 빌드 및 설치"
-cd $HOMEDIR/oci8/oci8-2.2.0 1> /dev/null
-phpize7.4 1> /dev/null
-./configure --with-php-config=/usr/bin/php-config7.4 \
-  --with-oci8=instantclient,$LD_LIBRARY_PATH 2>&1 | tee $HOMEDIR/oci8/oci8-7.4-configure.log 1> /dev/null
-make >> $HOMEDIR/oci8/oci8-7.4-configure.log 2>&1 && sudo make install >> $HOMEDIR/oci8/oci8-7.4-configure.log
-echo "extension=oci8.so" | sudo tee /etc/php/7.4/mods-available/oci8.ini >/dev/null
-sudo phpenmod oci8 1> /dev/null
+build_oci8 7.4 2.2.0
 
 # PHP 8.1 설치
 echo "PHP 8.1 설치"
@@ -89,13 +128,7 @@ sudo apt-get install -y --fix-missing php8.1-amqp php8.1-apcu php8.1-bcmath php8
 
 # PHP 8.1용 oci8 빌드 및 설치
 echo "PHP 8.1용 Oci8 빌드 및 설치"
-cd $HOMEDIR/oci8/oci8-3.2.1 1> /dev/null
-phpize8.1 1> /dev/null
-./configure --with-php-config=/usr/bin/php-config8.1 \
-  --with-oci8=instantclient,$LD_LIBRARY_PATH 2>&1 | tee $HOMEDIR/oci8/oci8-8.1-configure.log 1> /dev/null
-make >> $HOMEDIR/oci8/oci8-8.1-configure.log 2>&1 && sudo make install >> $HOMEDIR/oci8/oci8-8.1-configure.log
-echo "extension=oci8.so" | sudo tee /etc/php/8.1/mods-available/oci8.ini >/dev/null
-sudo phpenmod oci8 1> /dev/null
+build_oci8 8.1 3.2.1
 
 # PHP 8.2 설치
 echo "PHP 8.2 설치"
@@ -108,13 +141,7 @@ sudo apt-get install -y --fix-missing php8.2-amqp php8.2-apcu php8.2-bcmath php8
 
 # PHP 8.2 oci8 빌드 및 설치
 echo "PHP 8.2용 Oci8 빌드 및 설치"
-cd $HOMEDIR/oci8/oci8-3.4.1 1> /dev/null
-phpize8.2 1> /dev/null
-./configure --with-php-config=/usr/bin/php-config8.2 \
-  --with-oci8=instantclient,$LD_LIBRARY_PATH 2>&1 | tee $HOMEDIR/oci8/oci8-8.2-configure.log 1> /dev/null
-make >> $HOMEDIR/oci8/oci8-8.2-configure.log 2>&1 && sudo make install >> $HOMEDIR/oci8/oci8-8.2-configure.log
-echo "extension=oci8.so" | sudo tee /etc/php/8.2/mods-available/oci8.ini >/dev/null
-sudo phpenmod oci8 1> /dev/null
+build_oci8 8.2 3.4.1
 
 # PHP 8.4 설치
 echo "PHP 8.4 설치"
@@ -127,14 +154,7 @@ sudo apt-get install -y --fix-missing php8.4-amqp php8.4-apcu php8.4-bcmath php8
 
 # PHP 8.4 oci8 빌드 및 설치
 echo "PHP 8.4용 Oci8 빌드 및 설치"
-cd $HOMEDIR/oci8/oci8-3.4.1 1> /dev/null
-[ -f Makefile ] && make distclean 1> /dev/null
-phpize8.4 1> /dev/null
-./configure --with-php-config=/usr/bin/php-config8.4 \
-  --with-oci8=instantclient,$LD_LIBRARY_PATH 2>&1 | tee $HOMEDIR/oci8/oci8-8.4-configure.log 1> /dev/null
-make >> $HOMEDIR/oci8/oci8-8.4-configure.log 2>&1 && sudo make install >> $HOMEDIR/oci8/oci8-8.4-configure.log
-echo "extension=oci8.so" | sudo tee /etc/php/8.4/mods-available/oci8.ini >/dev/null
-sudo phpenmod -v 8.4 oci8 1> /dev/null
+build_oci8 8.4 3.4.1
 
 # PHP 8.5 설치
 echo "PHP 8.5 설치"
@@ -147,14 +167,7 @@ sudo apt-get install -y --fix-missing php8.5-amqp php8.5-apcu php8.5-bcmath php8
 
 # PHP 8.5 oci8 빌드 및 설치
 echo "PHP 8.5용 Oci8 빌드 및 설치"
-cd $HOMEDIR/oci8/oci8-3.4.1 1> /dev/null
-[ -f Makefile ] && make distclean 1> /dev/null
-phpize8.5 1> /dev/null
-./configure --with-php-config=/usr/bin/php-config8.5 \
-  --with-oci8=instantclient,$LD_LIBRARY_PATH 2>&1 | tee $HOMEDIR/oci8/oci8-8.5-configure.log 1> /dev/null
-make >> $HOMEDIR/oci8/oci8-8.5-configure.log 2>&1 && sudo make install >> $HOMEDIR/oci8/oci8-8.5-configure.log
-echo "extension=oci8.so" | sudo tee /etc/php/8.5/mods-available/oci8.ini >/dev/null
-sudo phpenmod -v 8.5 oci8 1> /dev/null
+build_oci8 8.5 3.4.1
 
 # oci8 소스 파일 제거
 echo "Oci8 소스 제거"
