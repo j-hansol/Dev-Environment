@@ -704,6 +704,25 @@ sudo tee "$VHOSTDIR/domains.conf" > /dev/null << DOMAINS_CONF
 </VirtualHost>
 DOMAINS_CONF
 
+# Apache2 Listen 설정
+# WSL(consomme 등) 포트 포워딩은 Apache가 bind한 주소 체계 그대로 Windows에 포트를 연다.
+# 기본 'Listen 80'은 [::] 듀얼스택 소켓 하나만 만들어 Windows에는 IPv6 포트만 열리고
+# 127.0.0.1 접속이 거부된다. [::]와 0.0.0.0을 함께 적어도 Apache가 IPv4를 생략하므로
+# IPv4 전용으로 Listen 한다.
+echo "Apache2 Listen 설정 (IPv4)"
+sudo tee /etc/apache2/ports.conf > /dev/null <<'PORTS_CONF'
+# IPv4 명시 (WSL 포트 포워딩 대응)
+Listen 0.0.0.0:80
+
+<IfModule ssl_module>
+	Listen 0.0.0.0:443
+</IfModule>
+
+<IfModule mod_gnutls.c>
+	Listen 0.0.0.0:443
+</IfModule>
+PORTS_CONF
+
 # Apache2 모듈 및 사이트 활성화
 echo "Apache2 모듈 및 사이트 활성화"
 sudo a2enmod -q vhost_alias ssl rewrite
