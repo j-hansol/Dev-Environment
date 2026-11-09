@@ -64,12 +64,9 @@ rm oci8-2.2.0.tgz 1> /dev/null
 pecl download oci8-3.2.1 1> /dev/null
 tar xvzf oci8-3.2.1.tgz 1> /dev/null
 rm oci8-3.2.1.tgz 1> /dev/null
-pecl download oci8-3.3.0 1> /dev/null
-tar xvzf oci8-3.3.0.tgz 1> /dev/null
-rm oci8-3.3.0.tgz 1> /dev/null
-pecl download oci8-3.4.0 1> /dev/null
-tar xvzf oci8-3.4.0.tgz 1> /dev/null
-rm oci8-3.4.0.tgz 1> /dev/null
+pecl download oci8-3.4.1 1> /dev/null
+tar xvzf oci8-3.4.1.tgz 1> /dev/null
+rm oci8-3.4.1.tgz 1> /dev/null
 
 # PHP 7.4용 Oci8 빌드 및 설치
 echo "PHP 7.4 Oci8 확장 빌드 및 설치"
@@ -77,7 +74,7 @@ cd $HOMEDIR/oci8/oci8-2.2.0 1> /dev/null
 phpize7.4 1> /dev/null
 ./configure --with-php-config=/usr/bin/php-config7.4 \
   --with-oci8=instantclient,$LD_LIBRARY_PATH 2>&1 | tee $HOMEDIR/oci8/oci8-7.4-configure.log 1> /dev/null
-sudo make install >> $HOMEDIR/oci8/oci8-7.4-configure.log
+make >> $HOMEDIR/oci8/oci8-7.4-configure.log 2>&1 && sudo make install >> $HOMEDIR/oci8/oci8-7.4-configure.log
 echo "extension=oci8.so" | sudo tee /etc/php/7.4/mods-available/oci8.ini >/dev/null
 sudo phpenmod oci8 1> /dev/null
 
@@ -96,7 +93,7 @@ cd $HOMEDIR/oci8/oci8-3.2.1 1> /dev/null
 phpize8.1 1> /dev/null
 ./configure --with-php-config=/usr/bin/php-config8.1 \
   --with-oci8=instantclient,$LD_LIBRARY_PATH 2>&1 | tee $HOMEDIR/oci8/oci8-8.1-configure.log 1> /dev/null
-sudo make install >> $HOMEDIR/oci8/oci8-8.1-configure.log
+make >> $HOMEDIR/oci8/oci8-8.1-configure.log 2>&1 && sudo make install >> $HOMEDIR/oci8/oci8-8.1-configure.log
 echo "extension=oci8.so" | sudo tee /etc/php/8.1/mods-available/oci8.ini >/dev/null
 sudo phpenmod oci8 1> /dev/null
 
@@ -111,11 +108,11 @@ sudo apt-get install -y --fix-missing php8.2-amqp php8.2-apcu php8.2-bcmath php8
 
 # PHP 8.2 oci8 빌드 및 설치
 echo "PHP 8.2용 Oci8 빌드 및 설치"
-cd $HOMEDIR/oci8/oci8-3.3.0 1> /dev/null
+cd $HOMEDIR/oci8/oci8-3.4.1 1> /dev/null
 phpize8.2 1> /dev/null
 ./configure --with-php-config=/usr/bin/php-config8.2 \
   --with-oci8=instantclient,$LD_LIBRARY_PATH 2>&1 | tee $HOMEDIR/oci8/oci8-8.2-configure.log 1> /dev/null
-sudo make install >> $HOMEDIR/oci8/oci8-8.2-configure.log
+make >> $HOMEDIR/oci8/oci8-8.2-configure.log 2>&1 && sudo make install >> $HOMEDIR/oci8/oci8-8.2-configure.log
 echo "extension=oci8.so" | sudo tee /etc/php/8.2/mods-available/oci8.ini >/dev/null
 sudo phpenmod oci8 1> /dev/null
 
@@ -130,13 +127,34 @@ sudo apt-get install -y --fix-missing php8.4-amqp php8.4-apcu php8.4-bcmath php8
 
 # PHP 8.4 oci8 빌드 및 설치
 echo "PHP 8.4용 Oci8 빌드 및 설치"
-cd $HOMEDIR/oci8/oci8-3.4.0 1> /dev/null
+cd $HOMEDIR/oci8/oci8-3.4.1 1> /dev/null
+[ -f Makefile ] && make distclean 1> /dev/null
 phpize8.4 1> /dev/null
 ./configure --with-php-config=/usr/bin/php-config8.4 \
   --with-oci8=instantclient,$LD_LIBRARY_PATH 2>&1 | tee $HOMEDIR/oci8/oci8-8.4-configure.log 1> /dev/null
-sudo make install >> $HOMEDIR/oci8/oci8-8.4-configure.log
+make >> $HOMEDIR/oci8/oci8-8.4-configure.log 2>&1 && sudo make install >> $HOMEDIR/oci8/oci8-8.4-configure.log
 echo "extension=oci8.so" | sudo tee /etc/php/8.4/mods-available/oci8.ini >/dev/null
-phpenmod oci8 1> /dev/null
+sudo phpenmod -v 8.4 oci8 1> /dev/null
+
+# PHP 8.5 설치
+echo "PHP 8.5 설치"
+sudo apt-get install -y --fix-missing php8.5-amqp php8.5-apcu php8.5-bcmath php8.5-bz2 php8.5-cli php8.5-curl php8.5-dba \
+    php8.5-dev php8.5-ds php8.5-enchant php8.5-gd php8.5-gearman php8.5-gmp php8.5-gnupg php8.5-http php8.5-igbinary \
+    php8.5-imagick php8.5-imap php8.5-intl php8.5-ldap php8.5-mailparse php8.5-mbstring php8.5-mcrypt \
+    php8.5-memcache php8.5-mongodb php8.5-mysql php8.5-pgsql php8.5-raphf php8.5-rdkafka php8.5-readline \
+    php8.5-redis php8.5-soap php8.5-sqlite3 php8.5-uuid php8.5-xdebug php8.5-xml php8.5-xmlrpc php8.5-xsl php8.5-yaml \
+    php8.5-zip libapache2-mod-php8.5 1> /dev/null
+
+# PHP 8.5 oci8 빌드 및 설치
+echo "PHP 8.5용 Oci8 빌드 및 설치"
+cd $HOMEDIR/oci8/oci8-3.4.1 1> /dev/null
+[ -f Makefile ] && make distclean 1> /dev/null
+phpize8.5 1> /dev/null
+./configure --with-php-config=/usr/bin/php-config8.5 \
+  --with-oci8=instantclient,$LD_LIBRARY_PATH 2>&1 | tee $HOMEDIR/oci8/oci8-8.5-configure.log 1> /dev/null
+make >> $HOMEDIR/oci8/oci8-8.5-configure.log 2>&1 && sudo make install >> $HOMEDIR/oci8/oci8-8.5-configure.log
+echo "extension=oci8.so" | sudo tee /etc/php/8.5/mods-available/oci8.ini >/dev/null
+sudo phpenmod -v 8.5 oci8 1> /dev/null
 
 # oci8 소스 파일 제거
 echo "Oci8 소스 제거"
@@ -145,10 +163,10 @@ sudo rm -rf $HOMEDIR/oci8 1> /dev/null
 
 # PHP 7.4 환경 설정 수정
 echo "PHP 7.4 환경 설정 수정"
-sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/7.4/fpm/php.ini; \
-sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/fpm/php.ini; \
-sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/7.4/fpm/php.ini; \
-sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.4/fpm/php.ini; \
+sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/7.4/apache2/php.ini; \
+sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/apache2/php.ini; \
+sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/7.4/apache2/php.ini; \
+sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.4/apache2/php.ini; \
 sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/7.4/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_host=127.0.0.1" | sudo tee -a /etc/php/7.4/mods-available/xdebug.ini; \
 sudo echo "xdebug.discover_client_host=1" | sudo tee -a /etc/php/7.4/mods-available/xdebug.ini; \
@@ -156,33 +174,43 @@ sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/7.4/mods-available/
 
 # PHP 8.1 환경 설정 수정
 echo "PHP 8.1 환경 설정 수정"
-sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8.1/fpm/php.ini; \
-sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/fpm/php.ini; \
-sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.1/fpm/php.ini; \
-sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.1/fpm/php.ini; \
+sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8.1/apache2/php.ini; \
+sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/apache2/php.ini; \
+sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.1/apache2/php.ini; \
+sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.1/apache2/php.ini; \
 sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_host=xdebug://gateway" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini
 
 # PHP 8.2 환경 설정 수정
 echo "PHP 8.2 환경 설정 수정"
-sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8.2/fpm/php.ini; \
-sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.2/fpm/php.ini; \
-sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.2/fpm/php.ini; \
-sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.2/fpm/php.ini; \
+sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8.2/apache2/php.ini; \
+sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.2/apache2/php.ini; \
+sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.2/apache2/php.ini; \
+sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.2/apache2/php.ini; \
 sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/8.2/mods-available/xdebug.ini; \
-sudo echo "xdebug.client_host=xdebug://gateway" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini; \
+sudo echo "xdebug.client_host=xdebug://gateway" | sudo tee -a /etc/php/8.2/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/8.2/mods-available/xdebug.ini
 
 # PHP 8.4 환경 설정 수정
 echo "PHP 8.4 환경 설정 수정"
-sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8.4/fpm/php.ini; \
-sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.4/fpm/php.ini; \
-sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.4/fpm/php.ini; \
-sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.4/fpm/php.ini; \
+sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8.4/apache2/php.ini; \
+sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.4/apache2/php.ini; \
+sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.4/apache2/php.ini; \
+sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.4/apache2/php.ini; \
 sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/8.4/mods-available/xdebug.ini; \
-sudo echo "xdebug.client_host=xdebug://gateway" | sudo tee -a /etc/php/8.1/mods-available/xdebug.ini; \
+sudo echo "xdebug.client_host=xdebug://gateway" | sudo tee -a /etc/php/8.4/mods-available/xdebug.ini; \
 sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/8.4/mods-available/xdebug.ini
+
+# PHP 8.5 환경 설정 수정
+echo "PHP 8.5 환경 설정 수정"
+sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 200M/g' /etc/php/8.5/apache2/php.ini; \
+sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.5/apache2/php.ini; \
+sudo sed -i 's/post_max_size = 8M/post_max_size = 250M/g' /etc/php/8.5/apache2/php.ini; \
+sudo sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/8.5/apache2/php.ini; \
+sudo echo "xdebug.mode = develop,debug" | sudo tee -a /etc/php/8.5/mods-available/xdebug.ini; \
+sudo echo "xdebug.client_host=xdebug://gateway" | sudo tee -a /etc/php/8.5/mods-available/xdebug.ini; \
+sudo echo "xdebug.client_port = 9000" | sudo tee -a /etc/php/8.5/mods-available/xdebug.ini
 
 # composer 설치
 echo "Composer 설치"
@@ -219,7 +247,7 @@ echo "NodeJS 최신 LTS 버전 설치"
 nvm install --lts
 
 # 사용자 홈 디렉토리 접근 권한 설정
-edho "사용자 홈 디렉토리 접근 권한 설정"
+echo "사용자 홈 디렉토리 접근 권한 설정"
 chmod a+x "$HOMEDIR"
 
 # 대시보드 스크립트 설치
@@ -228,7 +256,7 @@ sudo tee /var/www/html/index.php > /dev/null <<DASHBOARD
 <?php
     function checkSites() {
         if(file_exists('/etc/apache2/sites-enabled/sites.conf')) return 1;
-        elseif(file_exists('/etc/nginx/sites-enabled/domains.conf')) return 0;
+        elseif(file_exists('/etc/apache2/sites-enabled/domains.conf')) return 0;
         else return -1;
     }
 
@@ -340,7 +368,7 @@ sudo tee "$SPHP_DIR" > /dev/null <<SPHP
 
 if [ -z "\$1" ]; then
     echo "sphp <Version>"
-    echo "Version : 7.4, 8.1, 8.2, 8.4"
+    echo "Version : 7.4, 8.1, 8.2, 8.4, 8.5"
     exit
 fi
 
@@ -350,8 +378,6 @@ PHP_CONFIG_BIN="/usr/bin/php-config\${VERSION}"
 PHPIZE_BIN="/usr/bin/phpize\${VERSION}"
 PHAR_BIN="/usr/bin/phar\${VERSION}"
 PHAR_PHAR_BIN="/usr/bin/phar.phar\${VERSION}"
-PHP_FPM_SOCKET="/run/php/php\${VERSION}-fpm.sock"
-PHP_FPM_ALTERNATIVE="/etc/alternatives/php-fpm.sock"
 
 if [ ! -x "\$PHP_BIN" ]; then
     echo "\${PHP_BIN}을 찾을 수 없습니다."
@@ -388,27 +414,17 @@ else
     sudo update-alternatives --set phar.phar "\$PHAR_PHAR_BIN"
 fi
 
-if [ ! -S "\$PHP_FPM_SOCKET" ]; then
-    echo "\${PHP_FPM_SOCKET}을 찾을 수 없습니다."
-    exit
-fi
-
-if ! sudo update-alternatives --set php-fpm.sock "\$PHP_FPM_SOCKET"; then
-    echo "update-alternatives 설정에 실패했습니다."
-    echo "심볼릭 링크를 직접 생성합니다."
-
-    # 기존 심볼릭 링크 또는 파일 삭제
-    if [ -e "\$PHP_FPM_ALTERNATIVE" ] || [ -L "\$PHP_FPM_ALTERNATIVE" ]; then
-        sudo rm -f "\$PHP_FPM_ALTERNATIVE"
-    fi
-
-    # 새로운 심볼릭 링크 생성
-    if ! sudo ln -s "\$PHP_FPM_SOCKET" "\$PHP_FPM_ALTERNATIVE"; then
-        echo "심볼릭 링크 생성에 실패했습니다."
-        exit 1
-    fi
-
-    echo "\${PHP_FPM_ALTERNATIVE} -> \${PHP_FPM_SOCKET}"
+# Apache mod_php 버전 전환
+APACHE_MOD="php\${VERSION}"
+if [ -f "/etc/apache2/mods-available/\${APACHE_MOD}.load" ]; then
+    for MOD_LOAD in /etc/apache2/mods-enabled/php*.load; do
+        [ -e "\$MOD_LOAD" ] || continue
+        sudo a2dismod -q "\$(basename "\$MOD_LOAD" .load)"
+    done
+    sudo a2enmod -q "\$APACHE_MOD"
+    sudo service apache2 restart
+else
+    echo "Apache 모듈 \${APACHE_MOD}을 찾을 수 없습니다."
 fi
 
 ls -al /etc/alternatives/php*
@@ -421,11 +437,18 @@ SVHOST_DIR="/usr/local/bin/svhost"
 sudo tee "$SVHOST_DIR" > /dev/null <<SVHOST
 #!/bin/bash
 
-if [ -z "\$1" ]; then
+if [[ "\$1" != "sites" && "\$1" != "domains" ]]; then
     echo "usage : svhost <sites|domains>"
     exit
 fi
 
+PROFILE="\$1"
+CONF_DIR="/etc/apache2/sites-available/\${PROFILE}.conf"
+
+if [ ! -f "\$CONF_DIR" ]; then
+    echo "\$CONF_DIR not found"
+    exit
+fi
 
 case \$1 in 
     sites)
@@ -443,9 +466,8 @@ case \$1 in
         echo "usage : svhost <sites|domains>"
         ;;
 esac
-
-if [ -f "\$CONF_DIR" ]; then
 SVHOST
+
 sudo chmod a+x "$SVHOST_DIR"
 
 # 자체 서명 인증서 생성
@@ -454,7 +476,7 @@ SSL_DIR="/etc/ssl/private/dev"
 BASE_DOMAIN="wd"
 COMMON_NAME="*.${BASE_DOMAIN}"
 DAYS_EXPIRED=36500
-SNIPPET="/etc/nginx/conf.d/dev_ssl.conf"
+SNIPPET="/etc/apache2/conf-available/dev_ssl.conf"
 
 sudo mkdir -p "$SSL_DIR"
 sudo chmod 700 "$SSL_DIR"
@@ -470,51 +492,83 @@ if [[ ! -f "$SSL_DIR/ca.crt" ]]; then
   sudo openssl req -x509 -new -nodes \
     -key "$SSL_DIR/ca.key" \
     -sha256 -days "$DAYS_EXPIRED" \
-    -subj "/CN=Local ${TARGET_DOMAIN^^} Dev CA" \
+    -subj "/CN=Local ${BASE_DOMAIN^^} Dev CA" \
     -out "$SSL_DIR/ca.crt"
   sudo chmod 644 "$SSL_DIR/ca.crt"
 fi
+
+# 서버 인증서 발급 스크립트 설치
+# 와일드카드는 한 단계만 덮고 브라우저는 *.wd 같은 TLD 바로 아래 와일드카드를 거부하므로,
+# ~/projects 아래 프로젝트마다 *.<프로젝트>.wd 를 SAN에 넣어 발급한다.
+# 프로젝트를 추가한 뒤에는 sslcert 를 다시 실행하면 된다.
+SSLCERT_DIR="/usr/local/bin/sslcert"
+sudo tee "$SSLCERT_DIR" > /dev/null <<SSLCERT_VARS
+#!/bin/bash
+SSL_DIR="$SSL_DIR"
+BASE_DOMAIN="$BASE_DOMAIN"
+PROJECTS_DIR="$HOMEDIR/projects"
+DAYS_EXPIRED=$DAYS_EXPIRED
+SSLCERT_VARS
+sudo tee -a "$SSLCERT_DIR" > /dev/null <<'SSLCERT'
+set -e
 
 SERVER_KEY="$SSL_DIR/${BASE_DOMAIN}.key"
 SERVER_CSR="$SSL_DIR/${BASE_DOMAIN}.csr"
 SERVER_CRT="$SSL_DIR/${BASE_DOMAIN}.crt"
 EXT_CFG="$SSL_DIR/${BASE_DOMAIN}.ext"
 
-echo "🔑 서버 키 생성: $SERVER_KEY"
-sudo openssl genrsa -out "$SERVER_KEY" 2048
-sudo chmod 600 "$SERVER_KEY"
+SANS=("server.${BASE_DOMAIN}" "admin.sites.${BASE_DOMAIN}")
+if [ -d "$PROJECTS_DIR" ]; then
+    for PROJECT_PATH in "$PROJECTS_DIR"/*/; do
+        [ -d "$PROJECT_PATH" ] || continue
+        PROJECT=$(basename "$PROJECT_PATH")
+        PROJECT=${PROJECT,,}
+        if [[ "$PROJECT" =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$ ]]; then
+            SANS+=("*.${PROJECT}.${BASE_DOMAIN}")
+        else
+            echo "건너뜀 (도메인으로 쓸 수 없는 이름): $PROJECT"
+        fi
+    done
+fi
 
-echo "📄 CSR 생성: $SERVER_CSR (CN=$COMMON_NAME)"
-sudo openssl req -new -key "$SERVER_KEY" -subj "/CN=${COMMON_NAME}" -out "$SERVER_CSR"
+if ! sudo test -f "$SERVER_KEY"; then
+    echo "🔑 서버 키 생성: $SERVER_KEY"
+    sudo openssl genrsa -out "$SERVER_KEY" 2048 2> /dev/null
+    sudo chmod 600 "$SERVER_KEY"
+fi
 
-echo "🧩 SAN 구성: $EXT_CFG"
-cat <<EOF | sudo tee "$EXT_CFG"
-authorityKeyIdentifier=keyid,issuer
-basicConstraints=CA:FALSE
-keyUsage = digitalSignature,keyEncipherment
-extendedKeyUsage = serverAuth
-subjectAltName = @alt_names
+sudo openssl req -new -key "$SERVER_KEY" -subj "/CN=server.${BASE_DOMAIN}" -out "$SERVER_CSR"
 
-[alt_names]
-DNS.1=${COMMON_NAME}
-EOF
+{
+    echo "authorityKeyIdentifier=keyid,issuer"
+    echo "basicConstraints=CA:FALSE"
+    echo "keyUsage = digitalSignature,keyEncipherment"
+    echo "extendedKeyUsage = serverAuth"
+    echo "subjectAltName = @alt_names"
+    echo ""
+    echo "[alt_names]"
+    for i in "${!SANS[@]}"; do
+        echo "DNS.$((i + 1))=${SANS[$i]}"
+    done
+} | sudo tee "$EXT_CFG" > /dev/null
 
-echo "✍️  서버 인증서 발급: $SERVER_CRT"
 sudo openssl x509 -req -in "$SERVER_CSR" \
-  -CA "$SSL_DIR/ca.crt" -CAkey "$SSL_DIR/ca.key" -CAcreateserial \
-  -out "$SERVER_CRT" -days "$DAYS_EXPIRED" -sha256 \
-  -extfile "$EXT_CFG"
+    -CA "$SSL_DIR/ca.crt" -CAkey "$SSL_DIR/ca.key" -CAcreateserial \
+    -out "$SERVER_CRT" -days "$DAYS_EXPIRED" -sha256 \
+    -extfile "$EXT_CFG" 2> /dev/null
 sudo chmod 644 "$SERVER_CRT"
 
-echo "🧩 nginx SSL 스니펫 생성: $SNIPPET"
-sudo tee "$SNIPPET" > /dev/null <<EOF
-ssl_certificate     $SERVER_CRT;
-ssl_certificate_key $SERVER_KEY;
+echo "✍️  서버 인증서 발급: $SERVER_CRT"
+printf '    %s\n' "${SANS[@]}"
 
-ssl_session_cache shared:SSL:10m;
-ssl_session_timeout 1h;
-ssl_ciphers HIGH:!aNULL:!MD5;
-EOF
+if service apache2 status > /dev/null 2>&1; then
+    sudo service apache2 reload > /dev/null
+fi
+SSLCERT
+sudo chmod a+x "$SSLCERT_DIR"
+
+mkdir -p "$HOMEDIR/projects"
+sslcert
 
 # Apache2 환경설정 파일 생성
 echo "Ahache2 환경설정 파일 생성"
@@ -572,8 +626,8 @@ sudo tee "$VHOSTDIR/sites.conf" > /dev/null << SITES_CONF
     ServerAdmin webmaster@localhost
     VirtualDocumentRoot $HOMEDIR/projects/%2/%1
 
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
 
     <Directory $HOMEDIR/projects/*/*>
         DirectoryIndex index.php index.html index.htm
@@ -599,8 +653,8 @@ sudo tee "$VHOSTDIR/domains.conf" > /dev/null << DOMAINS_CONF
     ServerAdmin webmaster@localhost
     VirtualDocumentRoot $HOMEDIR/projects/%2/docroot
 
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
 
     <Directory $HOMEDIR/projects/*/docroot>
         DirectoryIndex index.php index.html index.htm
@@ -637,5 +691,14 @@ sudo tee "$VHOSTDIR/domains.conf" > /dev/null << DOMAINS_CONF
 </VirtualHost>
 DOMAINS_CONF
 
-a2enmode domains
-svhost 8.4
+# Apache2 모듈 및 사이트 활성화
+echo "Apache2 모듈 및 사이트 활성화"
+sudo a2enmod -q vhost_alias ssl rewrite
+sudo a2dissite -q 000-default
+sudo a2ensite -q default
+svhost domains
+
+# 기본 PHP 버전 설정 (CLI + Apache mod_php)
+sphp 8.5
+
+sudo apache2ctl configtest
